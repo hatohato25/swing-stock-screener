@@ -28,6 +28,10 @@ on:
 jobs:
   generate-report:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # gh-pagesブランチへの書き込み権限
+      pages: write     # GitHub Pagesへのデプロイ権限
+      id-token: write  # OIDC認証用（GitHub Pagesで推奨）
 
     steps:
       - name: 電話認証の確認

@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-small
     steps:
       - name: チェックアウト
         uses: actions/checkout@v4
