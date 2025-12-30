@@ -1,0 +1,24 @@
+# Core dependencies
+requests>=2.31.0
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Template engine
+jinja2>=3.1.2
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+responses>=0.23.0
+
+# Utilities
+jpholiday>=0.1.10
+python-dotenv>=1.0.0
+
+# Code quality
+flake8>=6.1.0
+black>=23.7.0
+
+# Technical indicators (optional, choose one)
+# ta-lib requires system dependencies, use pandas-ta as alternative
+# pandas-ta>=0.3.14  # 一時的にコメントアウト（利用可能なバージョンがない）
