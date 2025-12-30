@@ -37,39 +37,6 @@
 
 ---
 
-## 📊 実装状況
-
-### ✅ Phase 1: API認証方式の修正（完了 2025-12-25）
-- 電話認証対応
-- p_no管理機能
-- 仮想URL取得（REQUEST/MASTER/PRICE）
-
-### ✅ Phase 2: マスターデータ取得（完了 2025-12-25）
-- 銘柄マスター取得（21,287件）
-- 個別株フィルタリング（18,869件）
-- ETF/REIT除外（100%精度）
-
-### ✅ Phase 3: スクリーニング実装（完了 2025-12-25）
-- 株価データ取得
-- テクニカル指標計算（移動平均、ボリンジャーバンド、RSI、MACD）
-- スクリーニング条件実装（出来高急増、ブレイクアウト、価格変動）
-
-### 🔄 Phase 4: 成果物整理（進行中）
-- ドキュメント更新
-- コード整理
-- テスト作成
-
-### 📋 Phase 5: レポート生成（予定）
-- HTML/Markdownレポート生成
-- グラフ生成（matplotlib）
-
-### 📋 Phase 6: 自動化（予定）
-- GitHub Actions統合
-- GitHub Pages公開
-- 毎日自動実行
-
----
-
 ## 🏗️ アーキテクチャ
 
 ```
@@ -194,48 +161,11 @@ python3 -m src.main
 立花証券APIは**電話認証が必須**で、認証の有効期限は**3分間のみ**です。
 このため、完全自動化（cronによる無人実行）は不可能です。
 
-以下の2つの運用方法から選択してください。
+現在は以下の運用方法でレポートを生成しています。
 
 ---
 
-### 方式1: ローカル実行 + 自動デプロイ（推奨）
-
-**メリット**: 確実に実行でき、GitHub Pagesへのデプロイは自動化される
-
-**手順**:
-1. [立花証券e支店Webサイト](https://www.e-shiten.jp/)にログイン
-2. 電話認証を実施（自動音声ガイダンスに従う）
-3. **3分以内に**以下のコマンドを実行：
-
-```bash
-# 推奨: スクリプトで自動実行
-chmod +x scripts/run_daily_report.sh
-./scripts/run_daily_report.sh
-```
-
-または手動で実行:
-```bash
-# 1. スクリーニング実行（3分以内に実行すること！）
-python3 -m src.main
-
-# 2. レポートをコミット&プッシュ
-git add docs/
-git commit -m "📊 日次レポート生成: $(date +'%Y-%m-%d')"
-git push origin main
-
-# 3. GitHub Actionsが自動でGitHub Pagesにデプロイ（deploy-report.yml）
-```
-
-**処理時間の目安**:
-- マスターデータ取得: 約20秒
-- 株価データ取得（1,000件）: 約10分
-- レポート生成: 約10秒
-
----
-
-### 方式2: GitHub Actions手動実行（非推奨）
-
-**デメリット**: 電話認証のタイミング制御が困難、失敗しやすい
+### 運用手順: GitHub Actions手動実行
 
 **手順**:
 1. [立花証券e支店Webサイト](https://www.e-shiten.jp/)で電話認証を実施
@@ -245,17 +175,14 @@ git push origin main
    - **Run workflow** ボタンをクリック
 
 **注意事項**:
-- ワークフロー起動までのタイムラグがあるため、3分以内に完了しない可能性が高い
+- ワークフロー起動までのタイムラグがあるため、電話認証完了後すぐに実行してください
 - 失敗した場合、自動的にIssueが作成されます
-- **ローカル実行（方式1）を強く推奨します**
+- 成功すると、自動的にGitHub Pagesにデプロイされます
 
----
-
-### 将来的な改善案
-
-- セッション管理機能の追加（仮想URLの永続化・自動更新）
-- 立花証券APIの仕様変更を待つ（電話認証なしの照会APIの提供）
-- 代替APIの検討（他の証券会社API）
+**処理時間の目安**:
+- マスターデータ取得: 約20秒
+- 株価データ取得（1,000件）: 約10分
+- レポート生成: 約10秒
 
 ---
 
@@ -270,12 +197,7 @@ git push origin main
    - **Folder**: `/ (root)`
 3. **Save** をクリック
 
-### 2. GitHub Secretsの設定（オプション）
-
-**注意**: GitHub Actions手動実行（方式2）を使用する場合のみ必要です。ローカル実行（方式1・推奨）では不要です。
-
-<details>
-<summary>GitHub Secretsの設定手順を表示</summary>
+### 2. GitHub Secretsの設定
 
 1. リポジトリページで **Settings** → **Secrets and variables** → **Actions** を開く
 2. **New repository secret** をクリック
@@ -289,13 +211,9 @@ git push origin main
    - **Name**: `TACHIBANA_ENVIRONMENT`
    - **Secret**: `demo` または `prod`（初回は `demo` を推奨）
 
-**重要**: 電話認証の制約により、GitHub Actions手動実行は失敗しやすいため、ローカル実行（方式1）を推奨します。
-
-</details>
-
 ### 3. レポートの確認
 
-GitHub Pagesが有効化され、ローカルからレポートをプッシュすると、以下のURLでレポートを閲覧できます：
+GitHub Actionsが成功すると、以下のURLでレポートを閲覧できます：
 
 ```
 https://yourusername.github.io/swing-stock-screener/
@@ -320,16 +238,6 @@ breakout_result = self.technical_breakout(stock_code, stock_name, ohlcv_data, vo
 
 # 値上がり率の閾値（デフォルト: 5.0%）
 price_change_result = self.price_change_rate_filter(stock_code, stock_name, ohlcv_data, threshold=5.0)
-```
-
-### 実行スケジュールの変更
-
-[.github/workflows/daily-report.yml](.github/workflows/daily-report.yml)のcronを編集：
-
-```yaml
-schedule:
-  # 平日朝8時(JST) = UTC 23時(前日)
-  - cron: '0 23 * * 0-4'
 ```
 
 ### 対象銘柄数の変更
@@ -406,9 +314,8 @@ black src/ tests/
 **症状**: Actions タブでワークフローが赤色（失敗）
 
 **対処法**:
-1. **最も一般的な原因**: 電話認証が完了していない
-   - GitHub Actions手動実行では電話認証のタイミング制御が困難です
-   - **ローカル実行（方式1）に切り替えることを推奨します**
+1. **最も一般的な原因**: 電話認証が完了していない、または有効期限（3分）を過ぎた
+   - 電話認証完了後、すぐにワークフローを実行してください
 2. エラーログを確認
    - Actions タブ → 失敗したワークフロー → ログを確認
 3. 自動作成されたIssueを確認
@@ -461,25 +368,6 @@ black src/ tests/
 
 ---
 
-## 🗺️ ロードマップ
-
-### Phase 6: 品質向上（進行中）
-
-- [x] MVP完成
-- [ ] README整備
-- [ ] テストカバレッジ向上（目標80%）
-- [ ] パフォーマンス最適化
-
-### 将来の拡張機能
-
-- Chart.jsによる価格チャート表示
-- テーブルソート・フィルタ機能
-- 追加テクニカル指標（MACD、ストキャスティクス等）
-- 信用取引情報の分析
-- 板情報の分析
-
----
-
 ## 📄 ライセンス
 
 このプロジェクトは個人利用を目的としています。
@@ -499,5 +387,5 @@ black src/ tests/
 
 ---
 
-**最終更新**: 2025-11-21
-**プロジェクト状態**: MVP完成、本番運用準備中
+**最終更新**: 2025-12-30
+**プロジェクト状態**: 本番運用中

@@ -28,7 +28,7 @@ def process_single_stock(
     technical_calc: TechnicalIndicators,
     screener: StockScreener,
     logger: Logger,
-) -> Optional[Tuple[str, str, Optional[Dict[str, Any]], Optional[List[Any]]]]:
+) -> Tuple[bool, Optional[Tuple[str, str, Optional[Dict[str, Any]], Optional[List[Any]]]]]:
     """
     単一銘柄の株価データ取得とスクリーニングを実行する（並列処理用）
 
@@ -40,8 +40,9 @@ def process_single_stock(
         logger: ロガー
 
     Returns:
-        (銘柄コード, 銘柄名, 株価データ, スクリーニング結果) のタプル
-        エラー時は None
+        (処理成功フラグ, スクリーニング結果タプル)
+        - 処理成功フラグ: True=株価データ取得成功, False=エラー
+        - スクリーニング結果タプル: 該当時のみ(銘柄コード, 銘柄名, 株価データ, スクリーニング結果)、該当なしはNone
     """
     issue_code = stock.get("sIssueCode")
     issue_name = stock.get("sIssueName")
@@ -49,14 +50,14 @@ def process_single_stock(
     # 株価データ取得（既にrate_limiter.acquire()を内部で呼んでいる）
     price_data = price_client.get_daily_price(issue_code)
     if not price_data:
-        return None
+        return (False, None)  # エラー
 
     # テクニカル指標計算
     daily_prices = price_data.get("aCLMMfdsMarketPriceHistory", [])
     df = technical_calc.calculate_all_from_price_data(daily_prices)
 
     if df is None:
-        return None
+        return (False, None)  # エラー
 
     # スクリーニング
     screen_results = screener.screen_stock_with_dataframe(
@@ -69,9 +70,9 @@ def process_single_stock(
                 f"✅ スクリーニング該当: {issue_name}({issue_code}) "
                 f"カテゴリ={result.category}, スコア={result.score:.2f}"
             )
-        return (issue_code, issue_name, price_data, screen_results)
+        return (True, (issue_code, issue_name, price_data, screen_results))
 
-    return None
+    return (True, None)  # 処理成功、該当なし
 
 
 def process_single_value_stock(
@@ -225,8 +226,8 @@ def main():
         screener = StockScreener()
 
         screened_stocks = []
-        success_count = 0
-        error_count = 0
+        processed_count = 0  # 処理成功数
+        error_count = 0      # エラー数
 
         # 並列処理（ThreadPoolExecutor）
         # max_workers=7: レート制限を遵守しつつ並列化（10リクエスト/秒を守る）
@@ -256,7 +257,7 @@ def main():
                 if completed % 100 == 0:
                     logger.info(
                         f"進捗: {completed}/{len(target_stocks)}件 "
-                        f"(成功: {success_count}, エラー: {error_count})"
+                        f"(処理成功: {processed_count}, エラー: {error_count})"
                     )
                     print(
                         f"  進捗: {completed}/{len(target_stocks)}件 "
@@ -264,17 +265,18 @@ def main():
                     )
 
                 try:
-                    result = future.result()
-                    if result:
-                        (
-                            issue_code,
-                            issue_name,
-                            price_data,
-                            screen_results,
-                        ) = result
-                        success_count += 1
-                        for screen_result in screen_results:
-                            screened_stocks.append(screen_result.to_dict())
+                    success, result = future.result()
+                    if success:
+                        processed_count += 1
+                        if result:
+                            (
+                                issue_code,
+                                issue_name,
+                                price_data,
+                                screen_results,
+                            ) = result
+                            for screen_result in screen_results:
+                                screened_stocks.append(screen_result.to_dict())
                     else:
                         error_count += 1
                 except Exception as e:
@@ -282,11 +284,10 @@ def main():
                     logger.error(f"株価データ処理エラー: {e}", exc_info=True)
 
         logger.info(
-            f"株価データ取得完了: 成功={success_count}件, エラー={error_count}件"
+            f"株価データ取得完了: 処理成功={processed_count}件, エラー={error_count}件, 該当={len(screened_stocks)}件"
         )
-        logger.info(f"テクニカルスクリーニング結果: {len(screened_stocks)}件")
         print(
-            f"\n✅ 株価データ取得: 成功={success_count}件, エラー={error_count}件"
+            f"\n✅ 株価データ取得: 処理成功={processed_count}件, エラー={error_count}件"
         )
         print(f"✅ テクニカルスクリーニング該当: {len(screened_stocks)}件")
 
