@@ -6,7 +6,7 @@ Phase 7修正: Bearer認証からユーザーID/パスワード認証に変更
 Phase 7追加修正: GitHubサンプルに基づき必須パラメータ追加
 """
 
-import datetime
+from datetime import datetime, timezone, timedelta
 import json
 import requests
 from typing import Dict, Optional
@@ -75,17 +75,22 @@ class AuthManager:
     # Phase 7追加修正: GitHubサンプルに基づき必須パラメータ追加
     def _format_p_sd_date(self) -> str:
         """
-        p_sd_date形式のタイムスタンプを生成する
+        p_sd_date形式のタイムスタンプを生成する（JST固定）
+
+        立花証券APIはJST（日本標準時）を想定しているため、
+        GitHub Actions（UTC）やその他の環境でも常にJST時刻を送信します。
 
         Format: YYYY.MM.DD-HH:MM:SS.sss
 
         Returns:
-            タイムスタンプ文字列
+            タイムスタンプ文字列（JST）
 
         Example:
             2025.12.25-01:56:46.123
         """
-        now = datetime.datetime.now()
+        # JST = UTC+9
+        jst = timezone(timedelta(hours=9))
+        now = datetime.now(jst)
         return (
             f"{now.year}."
             f"{now.month:02d}."
