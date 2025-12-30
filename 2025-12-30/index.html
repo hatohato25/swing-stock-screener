@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>株式スクリーニングレポート - 2025-12-30</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #121824;
+            --bg-card: #1a2332;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ba3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glow-green: rgba(16, 185, 129, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0a0e17 0%, #12182e 100%);
+            background-attachment: fixed;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            position: relative;
+            background: radial-gradient(ellipse at top, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '> ';
+            color: var(--accent-cyan);
+            opacity: 0;
+            animation: blink 1.5s steps(2) infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 1; }
+        }
+
+        .date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .date::before {
+            content: '[ ';
+            color: var(--accent-cyan);
+        }
+
+        .date::after {
+            content: ' ]';
+            color: var(--accent-cyan);
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+        }
+
+        .info-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .info-card.about::before { background: linear-gradient(180deg, var(--accent-cyan), var(--accent-green)); }
+        .info-card.score-guide::before { background: linear-gradient(180deg, var(--accent-amber), var(--accent-red)); }
+        .info-card.screening-conditions::before { background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan)); }
+
+        .info-card h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .info-card h2::before {
+            content: '// ';
+            color: var(--text-muted);
+        }
+
+        .info-card p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card ul li {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .info-card ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+            font-size: 18px;
+        }
+
+        .info-card strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .summary h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 32px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 24px var(--glow-cyan);
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            line-height: 1;
+            text-shadow: 0 0 20px var(--glow-cyan);
+        }
+
+        section {
+            margin-bottom: 80px;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        section:nth-child(1) { animation-delay: 0.1s; }
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section > h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-subtle);
+            letter-spacing: 0.02em;
+            position: relative;
+        }
+
+        section > h2::before {
+            content: attr(data-index);
+            position: absolute;
+            left: 0;
+            top: -8px;
+            font-size: 12px;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .category-description {
+            background: rgba(6, 182, 212, 0.05);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .category-description strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(6, 182, 212, 0.1) 100%);
+        }
+
+        th {
+            padding: 16px 12px;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank {
+            font-weight: 700;
+            color: var(--accent-amber);
+            font-size: 16px;
+        }
+
+        tbody tr:nth-child(1) .rank { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        tbody tr:nth-child(2) .rank { color: #c0c0c0; text-shadow: 0 0 10px rgba(192, 192, 192, 0.5); }
+        tbody tr:nth-child(3) .rank { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
+
+        .positive {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .negative {
+            color: var(--accent-red);
+            font-weight: 500;
+        }
+
+        .score {
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 16px;
+            text-shadow: 0 0 10px var(--glow-cyan);
+        }
+
+        .disclaimer {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disclaimer::before {
+            content: '⚠';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+            color: var(--accent-red);
+            opacity: 0.1;
+        }
+
+        .disclaimer h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .disclaimer p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+        }
+
+        footer::before {
+            content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+            display: block;
+            color: var(--border-subtle);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        /* ==================== Top Performers Dashboard ==================== */
+        .top-performers-dashboard {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            margin: 2rem 0 3rem 0;
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .dashboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .title-icon {
+            font-size: 1.75rem;
+        }
+
+        .dashboard-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-subtle);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* カテゴリごとの色定義（CSS変数で一元管理） */
+        .category-card[data-category="volume-surge"] { --category-color: #00f5ff; }
+        .category-card[data-category="breakout"] { --category-color: #7c3aed; }
+        .category-card[data-category="bb-bounce"] { --category-color: #f59e0b; }
+        .category-card[data-category="pullback-dip"] { --category-color: #3b82f6; }
+        .category-card[data-category="golden-cross"] { --category-color: #eab308; }
+        .category-card[data-category="value-inflation"] { --category-color: #ec4899; }
+
+        .category-card:hover {
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--category-color) 20%, transparent);
+        }
+
+        .category-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--category-color);
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--category-color);
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .bar-item {
+            position: relative;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .bar-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: calc(var(--score) * 1%);
+            border-radius: 6px;
+            opacity: 0.4;
+            background: linear-gradient(90deg, var(--category-color), transparent);
+            border-left: 3px solid var(--category-color);
+            animation: barGrow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes barGrow {
+            from {
+                width: 0;
+                opacity: 0;
+            }
+            to {
+                width: calc(var(--score) * 1%);
+                opacity: 0.4;
+            }
+        }
+
+        .bar-info {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 1rem;
+            z-index: 1;
+        }
+
+        .bar-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+
+        .bar-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .info-card {
+                padding: 24px;
+            }
+
+            .summary {
+                padding: 24px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .top-performers-dashboard {
+                padding: 2rem 1.5rem;
+            }
+
+            .dashboard-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>株式スクリーニングレポート</h1>
+            <p class="date">2025-12-30</p>
+        </header>
+
+        <!-- Top Performers Dashboard -->
+        <section class="top-performers-dashboard">
+            <h2 class="dashboard-title">
+                <span class="title-icon">📊</span>
+                Top Performers Overview
+            </h2>
+            <p class="dashboard-subtitle">各カテゴリの上位5銘柄をスコア順で表示</p>
+
+            <div class="dashboard-grid">
+                
+
+<div class="category-card" data-category="volume-surge">
+    <h3 class="category-title">出来高急増</h3>
+    <div class="bar-chart" role="list" aria-label="出来高急増ランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="住友電設: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.0s;"
+             data-stock-code="1949"
+             data-stock-name="住友電設"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">住友電設</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="ＵＮＩＶＡ・Ｏａｋ  ＨＤ: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.1s;"
+             data-stock-code="3113"
+             data-stock-name="ＵＮＩＶＡ・Ｏａｋ  ＨＤ"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">ＵＮＩＶＡ・Ｏａｋ  ＨＤ</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="伊勢化学工業: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.2s;"
+             data-stock-code="4107"
+             data-stock-name="伊勢化学工業"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">伊勢化学工業</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="大阪油化工業: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.30000000000000004s;"
+             data-stock-code="4124"
+             data-stock-name="大阪油化工業"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">大阪油化工業</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="クスリのアオキＨＤ: スコア 84.8"
+             style="--score: 84.83988131242741; animation-delay: 0.4s;"
+             data-stock-code="3549"
+             data-stock-name="クスリのアオキＨＤ"
+             data-score="84.8">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">クスリのアオキＨＤ</span>
+                <span class="bar-score">84.8</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+                
+
+<div class="category-card" data-category="breakout">
+    <h3 class="category-title">ブレイクアウト</h3>
+    <div class="bar-chart" role="list" aria-label="ブレイクアウトランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="農業総合研究所: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.0s;"
+             data-stock-code="3541"
+             data-stock-name="農業総合研究所"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">農業総合研究所</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="クスリのアオキＨＤ: スコア 94.4"
+             style="--score: 94.36180487981558; animation-delay: 0.1s;"
+             data-stock-code="3549"
+             data-stock-name="クスリのアオキＨＤ"
+             data-score="94.4">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">クスリのアオキＨＤ</span>
+                <span class="bar-score">94.4</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="環境フレンドリーＨＤ: スコア 87.9"
+             style="--score: 87.92536401695648; animation-delay: 0.2s;"
+             data-stock-code="3777"
+             data-stock-name="環境フレンドリーＨＤ"
+             data-score="87.9">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">環境フレンドリーＨＤ</span>
+                <span class="bar-score">87.9</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="大盛工業: スコア 82.7"
+             style="--score: 82.67089231571921; animation-delay: 0.30000000000000004s;"
+             data-stock-code="1844"
+             data-stock-name="大盛工業"
+             data-score="82.7">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">大盛工業</span>
+                <span class="bar-score">82.7</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="マイネット: スコア 79.3"
+             style="--score: 79.25841789170438; animation-delay: 0.4s;"
+             data-stock-code="3928"
+             data-stock-name="マイネット"
+             data-score="79.3">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">マイネット</span>
+                <span class="bar-score">79.3</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+                
+
+<div class="category-card" data-category="bb-bounce">
+    <h3 class="category-title">BB下限反転</h3>
+    <div class="bar-chart" role="list" aria-label="BB下限反転ランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="クオールホールディングス: スコア 65.0"
+             style="--score: 65.0; animation-delay: 0.0s;"
+             data-stock-code="3034"
+             data-stock-name="クオールホールディングス"
+             data-score="65.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">クオールホールディングス</span>
+                <span class="bar-score">65.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="さくらインターネット: スコア 35.0"
+             style="--score: 35.0; animation-delay: 0.1s;"
+             data-stock-code="3778"
+             data-stock-name="さくらインターネット"
+             data-score="35.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">さくらインターネット</span>
+                <span class="bar-score">35.0</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+                
+
+<div class="category-card" data-category="pullback-dip">
+    <h3 class="category-title">押し目買いチャンス</h3>
+    <div class="bar-chart" role="list" aria-label="押し目買いチャンスランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="太平電業: スコア 71.0"
+             style="--score: 71.04942065685404; animation-delay: 0.0s;"
+             data-stock-code="1968"
+             data-stock-name="太平電業"
+             data-score="71.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">太平電業</span>
+                <span class="bar-score">71.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="Ｊ．フロントリテイリング: スコア 56.4"
+             style="--score: 56.4317035247351; animation-delay: 0.1s;"
+             data-stock-code="3086"
+             data-stock-name="Ｊ．フロントリテイリング"
+             data-score="56.4">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">Ｊ．フロントリテイリング</span>
+                <span class="bar-score">56.4</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="高砂熱学工業: スコア 40.6"
+             style="--score: 40.615410053213886; animation-delay: 0.2s;"
+             data-stock-code="1969"
+             data-stock-name="高砂熱学工業"
+             data-score="40.6">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">高砂熱学工業</span>
+                <span class="bar-score">40.6</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="住友林業: スコア 31.9"
+             style="--score: 31.903465765196984; animation-delay: 0.30000000000000004s;"
+             data-stock-code="1911"
+             data-stock-name="住友林業"
+             data-score="31.9">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">住友林業</span>
+                <span class="bar-score">31.9</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+                
+
+<div class="category-card" data-category="golden-cross">
+    <h3 class="category-title">ゴールデンクロス直前</h3>
+    <div class="bar-chart" role="list" aria-label="ゴールデンクロス直前ランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="コロプラ: スコア 72.3"
+             style="--score: 72.3329696868388; animation-delay: 0.0s;"
+             data-stock-code="3668"
+             data-stock-name="コロプラ"
+             data-score="72.3">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">コロプラ</span>
+                <span class="bar-score">72.3</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="エクサウィザーズ: スコア 65.0"
+             style="--score: 65.04973282226612; animation-delay: 0.1s;"
+             data-stock-code="4259"
+             data-stock-name="エクサウィザーズ"
+             data-score="65.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">エクサウィザーズ</span>
+                <span class="bar-score">65.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="日本国土開発: スコア 63.2"
+             style="--score: 63.20331359585177; animation-delay: 0.2s;"
+             data-stock-code="1887"
+             data-stock-name="日本国土開発"
+             data-score="63.2">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">日本国土開発</span>
+                <span class="bar-score">63.2</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="グリーホールディングス: スコア 62.0"
+             style="--score: 61.962301214027335; animation-delay: 0.30000000000000004s;"
+             data-stock-code="3632"
+             data-stock-name="グリーホールディングス"
+             data-score="62.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">グリーホールディングス</span>
+                <span class="bar-score">62.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="住友林業: スコア 60.8"
+             style="--score: 60.84775772502877; animation-delay: 0.4s;"
+             data-stock-code="1911"
+             data-stock-name="住友林業"
+             data-score="60.8">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">住友林業</span>
+                <span class="bar-score">60.8</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+                
+
+<div class="category-card" data-category="value-inflation">
+    <h3 class="category-title">インフレ対応バリュー株</h3>
+    <div class="bar-chart" role="list" aria-label="インフレ対応バリュー株ランキング">
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="南海化学: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.0s;"
+             data-stock-code="4040"
+             data-stock-name="南海化学"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">南海化学</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="ミヨシ油脂: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.1s;"
+             data-stock-code="4404"
+             data-stock-name="ミヨシ油脂"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">ミヨシ油脂</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="ミンカブ・ジ・インフォ: スコア 100.0"
+             style="--score: 100.0; animation-delay: 0.2s;"
+             data-stock-code="4436"
+             data-stock-name="ミンカブ・ジ・インフォ"
+             data-score="100.0">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">ミンカブ・ジ・インフォ</span>
+                <span class="bar-score">100.0</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="リネットジャパングループ: スコア 98.7"
+             style="--score: 98.73627071161104; animation-delay: 0.30000000000000004s;"
+             data-stock-code="3556"
+             data-stock-name="リネットジャパングループ"
+             data-score="98.7">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">リネットジャパングループ</span>
+                <span class="bar-score">98.7</span>
+            </div>
+        </div>
+        
+        <div class="bar-item"
+             role="listitem"
+             aria-label="フェイスネットワーク: スコア 86.4"
+             style="--score: 86.44749710033983; animation-delay: 0.4s;"
+             data-stock-code="3489"
+             data-stock-name="フェイスネットワーク"
+             data-score="86.4">
+            <div class="bar-fill"></div>
+            <div class="bar-info">
+                <span class="bar-label">フェイスネットワーク</span>
+                <span class="bar-score">86.4</span>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+            </div>
+        </section>
+
+        <div class="info-card about">
+            <h2>このレポートについて</h2>
+            <p>このレポートは、スウィング取引（数日〜数週間の保有期間）に適した個別株を自動抽出するものです。</p>
+            <p>テクニカル指標（移動平均線、ボリンジャーバンド、RSI、MACD等）と出来高をベースに、以下6つのカテゴリで銘柄を抽出しています：</p>
+            <ul>
+                <li><strong>出来高急増</strong>：機関投資家や大口資金の流入を示唆</li>
+                <li><strong>ブレイクアウト</strong>：トレンド転換の初動を捉える</li>
+                <li><strong>BB下限反転</strong>：逆張り戦略（売られ過ぎからの反転を狙う）</li>
+                <li><strong>押し目買いチャンス</strong>：上昇トレンド中の一時的な調整局面を捉える</li>
+                <li><strong>ゴールデンクロス直前</strong>：5日MAと25日MAのクロス直前を狙う</li>
+                <li><strong>インフレ対応バリュー株</strong>：緩和基準の割安株（収益性重視）</li>
+            </ul>
+            <p>※ETF、REIT、インフラファンドは除外し、個別株のみを対象としています。</p>
+        </div>
+
+        <div class="info-card score-guide">
+            <h2>スコアの見方</h2>
+            <ul>
+                <li><strong>スコア算出方法</strong>：各カテゴリで検出された銘柄群の中での相対順位に基づく0-100のスケール</li>
+                <li><strong>出来高急増</strong>：元スコア = (当日出来高 / 前日出来高) × 10</li>
+                <li><strong>ブレイクアウト</strong>：元スコア = MA乖離率 + 出来高比率</li>
+                <li><strong>BB下限反転</strong>：元スコア = BB乖離 + RSI + MACD改善 + 出来高</li>
+                <li><strong>押し目買いチャンス</strong>：元スコア = (MA上昇率×10) + (60-abs(RSI-50))×2 + MACDヒスト×10 + 出来高</li>
+                <li><strong>ゴールデンクロス直前</strong>：元スコア = ((1-MA差率)×50) + (5日MA上昇率×10) + RSI/10 + 出来高</li>
+                <li><strong>インフレ対応バリュー株</strong>：元スコア = (25/PER)×8 + (2.5/PBR)×8 + 配当利回り×4 + ROE×2</li>
+                <li><strong>解釈</strong>：スコア20以上は要注目、30以上は強い兆候、50以上は非常に強い兆候</li>
+                <li><strong>注意</strong>：スコアは同日内の相対評価です。カテゴリ間のスコア比較も可能です</li>
+            </ul>
+        </div>
+
+        <div class="info-card screening-conditions">
+            <h2>スクリーニング条件</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>カテゴリ</th>
+                            <th>条件</th>
+                            <th>理由</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>出来高急増</td>
+                            <td>前日比2倍以上</td>
+                            <td>大口資金の流入や材料の発生を示唆。流動性が高まり、価格変動の可能性が高まる</td>
+                        </tr>
+                        <tr>
+                            <td>ブレイクアウト</td>
+                            <td>25日MA上抜け または BB上限突破</td>
+                            <td>トレンド転換の初動を捉える。上抜け時の出来高増加は信頼性が高い</td>
+                        </tr>
+                        <tr>
+                            <td>BB下限反転</td>
+                            <td>BB下限±5%、RSI <= 30、MACD改善</td>
+                            <td>逆張り戦略。売られ過ぎからの反転を狙う。リスク高のため要注意</td>
+                        </tr>
+                        <tr>
+                            <td>押し目買いチャンス</td>
+                            <td>25日MA上昇中、現在値がMA-5%〜0%、RSI 40-60、MACDヒスト > 0</td>
+                            <td>上昇トレンド中の一時的な調整局面。トレンドフォロー戦略</td>
+                        </tr>
+                        <tr>
+                            <td>ゴールデンクロス直前</td>
+                            <td>5日MA < 25日MA、MA差1%以内、5日MA上昇中、RSI > 50</td>
+                            <td>短期MAが長期MAを下から上に抜ける直前。トレンド転換の可能性</td>
+                        </tr>
+                        <tr>
+                            <td>インフレ対応バリュー株</td>
+                            <td>PER < 25倍、PBR < 2.5倍、配当 >= 2.0%、ROE >= 8.0%</td>
+                            <td>インフレ環境で成長投資を行う企業。ROEで収益性を担保</td>
+                        </tr>
+                        <tr>
+                            <td>共通</td>
+                            <td>平均出来高10万株以上</td>
+                            <td>流動性を確保し、スムーズな売買を可能にする</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>サマリー</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">該当銘柄数（ユニーク）</div>
+                    <div class="stat-value">306</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">出来高急増</div>
+                    <div class="stat-value">127</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">ブレイクアウト</div>
+                    <div class="stat-value">208</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">BB下限反転</div>
+                    <div class="stat-value">2</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">押し目買いチャンス</div>
+                    <div class="stat-value">4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">ゴールデンクロス直前</div>
+                    <div class="stat-value">12</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">インフレ対応バリュー株</div>
+                    <div class="stat-value">227</div>
+                </div>
+            </div>
+        </div>
+
+        
+        <section>
+            <h2 data-index="[01]">出来高急増ランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：前日比2倍以上の出来高を記録した銘柄。機関投資家の参入や材料の発生を示唆します。<br>
+                <strong>活用法</strong>：出来高急増は価格変動の前兆。RSIと併せて買われ過ぎを確認しましょう。
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>当日出来高</th>
+                            <th>平均出来高(25日)</th>
+                            <th>出来高比率</th>
+                            <th>RSI</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>1949</td>
+                            <td>住友電設</td>
+                            <td>9700.0</td>
+                            <td>1,116,500</td>
+                            <td>116,092</td>
+                            <td class="positive">9.62倍</td>
+                            <td>46.55</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>3113</td>
+                            <td>ＵＮＩＶＡ・Ｏａｋ  ＨＤ</td>
+                            <td>71.0</td>
+                            <td>9,888,600</td>
+                            <td>724,104</td>
+                            <td class="positive">13.66倍</td>
+                            <td>73.68</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>4107</td>
+                            <td>伊勢化学工業</td>
+                            <td>4985.0</td>
+                            <td>2,129,200</td>
+                            <td>192,644</td>
+                            <td class="positive">11.05倍</td>
+                            <td>20.03</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>4124</td>
+                            <td>大阪油化工業</td>
+                            <td>2449.0</td>
+                            <td>44,500</td>
+                            <td>4,812</td>
+                            <td class="positive">9.25倍</td>
+                            <td>44.67</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>3549</td>
+                            <td>クスリのアオキＨＤ</td>
+                            <td>4767.0</td>
+                            <td>2,232,700</td>
+                            <td>303,788</td>
+                            <td class="positive">7.35倍</td>
+                            <td>82.38</td>
+                            <td class="score">84.8</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>4020</td>
+                            <td>ビートレンド</td>
+                            <td>795.0</td>
+                            <td>50,900</td>
+                            <td>7,424</td>
+                            <td class="positive">6.86倍</td>
+                            <td>28.25</td>
+                            <td class="score">80.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>3082</td>
+                            <td>きちりホールディングス</td>
+                            <td>924.0</td>
+                            <td>172,900</td>
+                            <td>29,660</td>
+                            <td class="positive">5.83倍</td>
+                            <td>31.93</td>
+                            <td class="score">71.6</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>3196</td>
+                            <td>ホットランドＨＤ</td>
+                            <td>2012.0</td>
+                            <td>374,700</td>
+                            <td>68,136</td>
+                            <td class="positive">5.5倍</td>
+                            <td>28.5</td>
+                            <td class="score">68.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>4167</td>
+                            <td>ココペリ</td>
+                            <td>303.0</td>
+                            <td>120,900</td>
+                            <td>22,116</td>
+                            <td class="positive">5.47倍</td>
+                            <td>47.46</td>
+                            <td class="score">68.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>3091</td>
+                            <td>ブロンコビリー</td>
+                            <td>3800.0</td>
+                            <td>201,800</td>
+                            <td>38,816</td>
+                            <td class="positive">5.2倍</td>
+                            <td>38.67</td>
+                            <td class="score">66.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>3246</td>
+                            <td>コーセーアールイー</td>
+                            <td>753.0</td>
+                            <td>110,800</td>
+                            <td>21,580</td>
+                            <td class="positive">5.13倍</td>
+                            <td>73.91</td>
+                            <td class="score">65.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>3177</td>
+                            <td>ありがとうサービス</td>
+                            <td>3530.0</td>
+                            <td>5,100</td>
+                            <td>1,112</td>
+                            <td class="positive">4.59倍</td>
+                            <td>58.67</td>
+                            <td class="score">60.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">13</td>
+                            <td>4171</td>
+                            <td>グローバルインフォ</td>
+                            <td>1406.0</td>
+                            <td>31,600</td>
+                            <td>6,940</td>
+                            <td class="positive">4.55倍</td>
+                            <td>20.9</td>
+                            <td class="score">60.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">14</td>
+                            <td>4412</td>
+                            <td>サイエンスアーツ</td>
+                            <td>1751.0</td>
+                            <td>208,000</td>
+                            <td>45,780</td>
+                            <td class="positive">4.54倍</td>
+                            <td>59.26</td>
+                            <td class="score">60.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">15</td>
+                            <td>4245</td>
+                            <td>ダイキアクシス</td>
+                            <td>679.0</td>
+                            <td>170,100</td>
+                            <td>37,592</td>
+                            <td class="positive">4.52倍</td>
+                            <td>26.23</td>
+                            <td class="score">60.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">16</td>
+                            <td>4022</td>
+                            <td>ラサ工業</td>
+                            <td>6620.0</td>
+                            <td>364,000</td>
+                            <td>80,924</td>
+                            <td class="positive">4.5倍</td>
+                            <td>64.07</td>
+                            <td class="score">60.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">17</td>
+                            <td>4293</td>
+                            <td>セプテーニ・ＨＤ</td>
+                            <td>485.0</td>
+                            <td>2,917,000</td>
+                            <td>649,728</td>
+                            <td class="positive">4.49倍</td>
+                            <td>88.42</td>
+                            <td class="score">59.9</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">18</td>
+                            <td>3777</td>
+                            <td>環境フレンドリーＨＤ</td>
+                            <td>53.0</td>
+                            <td>13,949,000</td>
+                            <td>3,152,792</td>
+                            <td class="positive">4.42倍</td>
+                            <td>70.37</td>
+                            <td class="score">59.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">19</td>
+                            <td>4351</td>
+                            <td>山田再生系債券回収</td>
+                            <td>843.0</td>
+                            <td>15,900</td>
+                            <td>3,600</td>
+                            <td class="positive">4.42倍</td>
+                            <td>18.92</td>
+                            <td class="score">59.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">20</td>
+                            <td>3035</td>
+                            <td>ケイティケイ</td>
+                            <td>657.0</td>
+                            <td>29,800</td>
+                            <td>7,016</td>
+                            <td class="positive">4.25倍</td>
+                            <td>85.45</td>
+                            <td class="score">57.8</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        
+        <section>
+            <h2 data-index="[02]">テクニカルブレイクアウトランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：25日移動平均線の上抜けまたはボリンジャーバンド上限突破。トレンド転換の初動を捉えます。<br>
+                <strong>活用法</strong>：上抜け時の出来高増加が重要。MACD（ヒストグラム）がプラスなら上昇トレンドの可能性大。
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>25日MA</th>
+                            <th>乖離率</th>
+                            <th>出来高比率</th>
+                            <th>RSI</th>
+                            <th>MACD</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>3541</td>
+                            <td>農業総合研究所</td>
+                            <td>714.0</td>
+                            <td>467.56</td>
+                            <td class="positive">52.71%</td>
+                            <td class="positive">1.5倍</td>
+                            <td>90.11</td>
+                            <td>26.9</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>3549</td>
+                            <td>クスリのアオキＨＤ</td>
+                            <td>4767.0</td>
+                            <td>3857.28</td>
+                            <td class="positive">23.58%</td>
+                            <td class="positive">15.78倍</td>
+                            <td>82.38</td>
+                            <td>90.84</td>
+                            <td class="score">94.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>3777</td>
+                            <td>環境フレンドリーＨＤ</td>
+                            <td>53.0</td>
+                            <td>44.04</td>
+                            <td class="positive">20.35%</td>
+                            <td class="positive">6.45倍</td>
+                            <td>70.37</td>
+                            <td>1.33</td>
+                            <td class="score">87.9</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>1844</td>
+                            <td>大盛工業</td>
+                            <td>575.0</td>
+                            <td>517.44</td>
+                            <td class="positive">11.12%</td>
+                            <td class="positive">1.53倍</td>
+                            <td>49.43</td>
+                            <td>14.8</td>
+                            <td class="score">82.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>3928</td>
+                            <td>マイネット</td>
+                            <td>301.0</td>
+                            <td>257.24</td>
+                            <td class="positive">17.01%</td>
+                            <td class="positive">0.19倍</td>
+                            <td>74.75</td>
+                            <td>4.17</td>
+                            <td class="score">79.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>4199</td>
+                            <td>ワンダープラネット</td>
+                            <td>1254.0</td>
+                            <td>818.6</td>
+                            <td class="positive">53.19%</td>
+                            <td class="positive">0.25倍</td>
+                            <td>83.75</td>
+                            <td>61.38</td>
+                            <td class="score">77.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>3997</td>
+                            <td>トレードワークス</td>
+                            <td>490.0</td>
+                            <td>390.8</td>
+                            <td class="positive">25.38%</td>
+                            <td class="positive">1.92倍</td>
+                            <td>73.53</td>
+                            <td>18.31</td>
+                            <td class="score">77.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>4255</td>
+                            <td>ＴＨＥＣ００</td>
+                            <td>2470.0</td>
+                            <td>1961.2</td>
+                            <td class="positive">25.94%</td>
+                            <td class="positive">1.38倍</td>
+                            <td>70.94</td>
+                            <td>27.17</td>
+                            <td class="score">75.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>3512</td>
+                            <td>日本フェルト</td>
+                            <td>860.0</td>
+                            <td>668.04</td>
+                            <td class="positive">28.73%</td>
+                            <td class="positive">2.64倍</td>
+                            <td>79.64</td>
+                            <td>21.26</td>
+                            <td class="score">74.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>4570</td>
+                            <td>免疫生物研究所</td>
+                            <td>2045.0</td>
+                            <td>1875.96</td>
+                            <td class="positive">9.01%</td>
+                            <td class="positive">1.59倍</td>
+                            <td>57.36</td>
+                            <td>-5.49</td>
+                            <td class="score">72.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>1866</td>
+                            <td>北野建設</td>
+                            <td>1496.0</td>
+                            <td>1293.64</td>
+                            <td class="positive">15.64%</td>
+                            <td class="positive">0.91倍</td>
+                            <td>80.89</td>
+                            <td>36.86</td>
+                            <td class="score">71.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>3321</td>
+                            <td>ミタチ産業</td>
+                            <td>2129.0</td>
+                            <td>1861.12</td>
+                            <td class="positive">14.39%</td>
+                            <td class="positive">0.45倍</td>
+                            <td>76.52</td>
+                            <td>18.39</td>
+                            <td class="score">70.6</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">13</td>
+                            <td>4112</td>
+                            <td>保土谷化学工業</td>
+                            <td>2250.0</td>
+                            <td>1936.64</td>
+                            <td class="positive">16.18%</td>
+                            <td class="positive">1.33倍</td>
+                            <td>83.61</td>
+                            <td>31.72</td>
+                            <td class="score">69.9</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">14</td>
+                            <td>3113</td>
+                            <td>ＵＮＩＶＡ・Ｏａｋ  ＨＤ</td>
+                            <td>71.0</td>
+                            <td>64.44</td>
+                            <td class="positive">10.18%</td>
+                            <td class="positive">13.92倍</td>
+                            <td>73.68</td>
+                            <td>1.2</td>
+                            <td class="score">69.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">15</td>
+                            <td>4047</td>
+                            <td>関東電化工業</td>
+                            <td>1142.0</td>
+                            <td>1029.56</td>
+                            <td class="positive">10.92%</td>
+                            <td class="positive">1.73倍</td>
+                            <td>83.33</td>
+                            <td>11.03</td>
+                            <td class="score">67.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">16</td>
+                            <td>3665</td>
+                            <td>エニグモ</td>
+                            <td>467.0</td>
+                            <td>417.44</td>
+                            <td class="positive">11.87%</td>
+                            <td class="positive">2.74倍</td>
+                            <td>82.29</td>
+                            <td>4.11</td>
+                            <td class="score">66.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">17</td>
+                            <td>3315</td>
+                            <td>日本コークス工業</td>
+                            <td>111.0</td>
+                            <td>104.04</td>
+                            <td class="positive">6.69%</td>
+                            <td class="positive">1.45倍</td>
+                            <td>75.0</td>
+                            <td>0.75</td>
+                            <td class="score">66.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">18</td>
+                            <td>4022</td>
+                            <td>ラサ工業</td>
+                            <td>6620.0</td>
+                            <td>5902.4</td>
+                            <td class="positive">12.16%</td>
+                            <td class="positive">6.61倍</td>
+                            <td>64.07</td>
+                            <td>12.89</td>
+                            <td class="score">66.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">19</td>
+                            <td>4412</td>
+                            <td>サイエンスアーツ</td>
+                            <td>1751.0</td>
+                            <td>1608.72</td>
+                            <td class="positive">8.84%</td>
+                            <td class="positive">4.47倍</td>
+                            <td>59.26</td>
+                            <td>4.47</td>
+                            <td class="score">66.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">20</td>
+                            <td>3936</td>
+                            <td>グローバルウェイ</td>
+                            <td>144.0</td>
+                            <td>133.72</td>
+                            <td class="positive">7.69%</td>
+                            <td class="positive">1.69倍</td>
+                            <td>56.44</td>
+                            <td>2.03</td>
+                            <td class="score">65.8</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        
+        <section>
+            <h2 data-index="[03]">BB下限反転ランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：ボリンジャーバンド下限付近で売られ過ぎから反転の兆候がある銘柄。逆張り戦略。<br>
+                <strong>活用法</strong>：RSI 30以下の売られ過ぎ、かつMACDヒストグラムが底を打った銘柄。リスク管理（ストップロス設定）必須。<br>
+                <strong>⚠️ 注意</strong>：逆張り戦略のため、リスクが高いです。損切りルールを厳守してください。
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>BB下限</th>
+                            <th>BB乖離率</th>
+                            <th>RSI</th>
+                            <th>MACD改善</th>
+                            <th>出来高比率</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>3034</td>
+                            <td>クオールホールディングス</td>
+                            <td>2165.0</td>
+                            <td>2130.19</td>
+                            <td class="positive">1.63%</td>
+                            <td class="negative">26.17</td>
+                            <td class="positive">0.69</td>
+                            <td class="positive">1.64倍</td>
+                            <td class="score">65.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>3778</td>
+                            <td>さくらインターネット</td>
+                            <td>2810.0</td>
+                            <td>2754.15</td>
+                            <td class="positive">2.03%</td>
+                            <td class="negative">28.90</td>
+                            <td class="positive">0.46</td>
+                            <td class="positive">1.66倍</td>
+                            <td class="score">35.0</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        
+        <section>
+            <h2 data-index="[04]">押し目買いチャンスランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：25日MAが上昇トレンド中で、一時的な調整局面にある銘柄。<br>
+                <strong>条件</strong>：25日MA上昇中、現在値がMA-5%〜0%、RSI 40-60、MACDヒストグラム > 0、平均出来高10万株以上<br>
+                <strong>活用法</strong>：上昇トレンドの押し目を狙った順張り戦略。RSIが中立圏で買われ過ぎリスクが低い。<br>
+                <strong>スコア計算</strong>：(MA上昇率×10) + (60-abs(RSI-50))×2 + MACDヒスト×10 + 出来高
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>25日MA</th>
+                            <th>MA乖離率</th>
+                            <th>MA変化率</th>
+                            <th>RSI</th>
+                            <th>MACDヒスト</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>1968</td>
+                            <td>太平電業</td>
+                            <td>2179.0</td>
+                            <td>2202.92</td>
+                            <td class="negative">-1.09%</td>
+                            <td class="positive">0.04%</td>
+                            <td>40.46</td>
+                            <td class="positive">8.16</td>
+                            <td class="score">71.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>3086</td>
+                            <td>Ｊ．フロントリテイリング</td>
+                            <td>2210.0</td>
+                            <td>2219.24</td>
+                            <td class="negative">-0.42%</td>
+                            <td class="positive">0.04%</td>
+                            <td>53.65</td>
+                            <td class="positive">5.45</td>
+                            <td class="score">56.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>1969</td>
+                            <td>高砂熱学工業</td>
+                            <td>4445.0</td>
+                            <td>4468.84</td>
+                            <td class="negative">-0.53%</td>
+                            <td class="positive">0.04%</td>
+                            <td>47.30</td>
+                            <td class="positive">4.21</td>
+                            <td class="score">40.6</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>1911</td>
+                            <td>住友林業</td>
+                            <td>1601.5</td>
+                            <td>1611.14</td>
+                            <td class="negative">-0.60%</td>
+                            <td class="positive">0.15%</td>
+                            <td>51.39</td>
+                            <td class="positive">3.11</td>
+                            <td class="score">31.9</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        
+        <section>
+            <h2 data-index="[05]">ゴールデンクロス直前ランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：5日MAと25日MAがゴールデンクロス直前（MA差1%以内）の銘柄。<br>
+                <strong>条件</strong>：5日MA < 25日MA、MA差1%以内、5日MA上昇中、RSI > 50、平均出来高10万株以上<br>
+                <strong>活用法</strong>：短期MAが長期MAを下から上に抜ける直前を捉える。トレンド転換の初動を狙う戦略。<br>
+                <strong>スコア計算</strong>：((1-MA差率)×50) + (5日MA上昇率×10) + RSI/10 + 出来高
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>5日MA</th>
+                            <th>25日MA</th>
+                            <th>MA差率</th>
+                            <th>5日MA変化</th>
+                            <th>RSI</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>3668</td>
+                            <td>コロプラ</td>
+                            <td>441.0</td>
+                            <td>428.20</td>
+                            <td>428.52</td>
+                            <td class="negative">0.07%</td>
+                            <td class="positive">1.09%</td>
+                            <td class="positive">61.43</td>
+                            <td class="score">72.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>4259</td>
+                            <td>エクサウィザーズ</td>
+                            <td>667.0</td>
+                            <td>650.00</td>
+                            <td>651.88</td>
+                            <td class="negative">0.29%</td>
+                            <td class="positive">1.79%</td>
+                            <td class="positive">61.45</td>
+                            <td class="score">65.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>1887</td>
+                            <td>日本国土開発</td>
+                            <td>540.0</td>
+                            <td>530.40</td>
+                            <td>530.96</td>
+                            <td class="negative">0.11%</td>
+                            <td class="positive">0.57%</td>
+                            <td class="positive">60.34</td>
+                            <td class="score">63.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>3632</td>
+                            <td>グリーホールディングス</td>
+                            <td>405.0</td>
+                            <td>403.60</td>
+                            <td>403.84</td>
+                            <td class="negative">0.06%</td>
+                            <td class="positive">0.30%</td>
+                            <td class="positive">55.32</td>
+                            <td class="score">62.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>1911</td>
+                            <td>住友林業</td>
+                            <td>1601.5</td>
+                            <td>1610.40</td>
+                            <td>1611.14</td>
+                            <td class="negative">0.05%</td>
+                            <td class="positive">0.12%</td>
+                            <td class="positive">51.39</td>
+                            <td class="score">60.8</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>1803</td>
+                            <td>清水建設</td>
+                            <td>2699.0</td>
+                            <td>2676.40</td>
+                            <td>2681.12</td>
+                            <td class="negative">0.18%</td>
+                            <td class="positive">0.31%</td>
+                            <td class="positive">51.06</td>
+                            <td class="score">57.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>1925</td>
+                            <td>大和ハウス工業</td>
+                            <td>5204.0</td>
+                            <td>5184.20</td>
+                            <td>5199.92</td>
+                            <td class="negative">0.30%</td>
+                            <td class="positive">0.32%</td>
+                            <td class="positive">54.17</td>
+                            <td class="score">52.8</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>3911</td>
+                            <td>Ａｉｍｉｎｇ</td>
+                            <td>226.0</td>
+                            <td>225.60</td>
+                            <td>227.32</td>
+                            <td class="negative">0.76%</td>
+                            <td class="positive">0.71%</td>
+                            <td class="positive">51.85</td>
+                            <td class="score">38.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>3558</td>
+                            <td>ジェイドグループ</td>
+                            <td>1460.0</td>
+                            <td>1430.00</td>
+                            <td>1444.44</td>
+                            <td class="negative">1.00%</td>
+                            <td class="positive">1.53%</td>
+                            <td class="positive">54.05</td>
+                            <td class="score">35.3</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>3387</td>
+                            <td>クリエイト・レストランツ</td>
+                            <td>775.0</td>
+                            <td>766.80</td>
+                            <td>773.44</td>
+                            <td class="negative">0.86%</td>
+                            <td class="positive">0.52%</td>
+                            <td class="positive">52.75</td>
+                            <td class="score">34.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>4091</td>
+                            <td>日本酸素ホールディングス</td>
+                            <td>4742.0</td>
+                            <td>4751.60</td>
+                            <td>4789.68</td>
+                            <td class="negative">0.80%</td>
+                            <td class="positive">0.24%</td>
+                            <td class="positive">52.52</td>
+                            <td class="score">33.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>4151</td>
+                            <td>協和キリン</td>
+                            <td>2535.0</td>
+                            <td>2543.60</td>
+                            <td>2568.44</td>
+                            <td class="negative">0.97%</td>
+                            <td class="positive">0.10%</td>
+                            <td class="positive">55.02</td>
+                            <td class="score">25.7</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        
+        <section>
+            <h2 data-index="[06]">インフレ対応バリュー株ランキング（Top 20）</h2>
+            <div class="category-description">
+                <strong>目的</strong>：インフレ環境に適応した緩和基準（PER < 25倍、PBR < 2.5倍、配当 >= 2.0%、ROE >= 8.0%）で抽出された割安株。<br>
+                <strong>背景</strong>：インフレ環境では企業が成長投資を行うため、一時的にPER/PBRが上昇します。ROEで収益性を担保することで、成長投資が有効に機能している企業を抽出しています。<br>
+                <strong>活用法</strong>：インフレ継続局面や金利上昇局面に適応した銘柄選択。収益性（ROE）を重視した成長期待株。<br>
+                <strong>スコア計算</strong>：(25/PER)×8 + (2.5/PBR)×8 + 配当利回り×4 + ROE×2
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>銘柄コード</th>
+                            <th>銘柄名</th>
+                            <th>現在値</th>
+                            <th>PER</th>
+                            <th>PBR</th>
+                            <th>配当利回り</th>
+                            <th>ROE</th>
+                            <th>スコア</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>4040</td>
+                            <td>南海化学</td>
+                            <td>3130.0</td>
+                            <td>2.80倍</td>
+                            <td>0.83倍</td>
+                            <td class="positive">1.92%</td>
+                            <td class="positive">26.19%</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>4404</td>
+                            <td>ミヨシ油脂</td>
+                            <td>2276.0</td>
+                            <td>2.40倍</td>
+                            <td>0.81倍</td>
+                            <td class="positive">4.37%</td>
+                            <td class="positive">31.20%</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>4436</td>
+                            <td>ミンカブ・ジ・インフォ</td>
+                            <td>449.0</td>
+                            <td>19.50倍</td>
+                            <td>4.03倍</td>
+                            <td class="positive">-%</td>
+                            <td class="positive">113.40%</td>
+                            <td class="score">100.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>3556</td>
+                            <td>リネットジャパングループ</td>
+                            <td>1013.0</td>
+                            <td>20.90倍</td>
+                            <td>-倍</td>
+                            <td class="positive">-%</td>
+                            <td class="positive">68.91%</td>
+                            <td class="score">98.7</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>3489</td>
+                            <td>フェイスネットワーク</td>
+                            <td>806.0</td>
+                            <td>7.00倍</td>
+                            <td>2.40倍</td>
+                            <td class="positive">4.97%</td>
+                            <td class="positive">34.82%</td>
+                            <td class="score">86.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>3945</td>
+                            <td>スーパーバッグ</td>
+                            <td>2742.0</td>
+                            <td>4.50倍</td>
+                            <td>0.91倍</td>
+                            <td class="positive">3.99%</td>
+                            <td class="positive">19.07%</td>
+                            <td class="score">83.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>3917</td>
+                            <td>アイリッジ</td>
+                            <td>470.0</td>
+                            <td>4.50倍</td>
+                            <td>1.81倍</td>
+                            <td class="positive">-%</td>
+                            <td class="positive">32.03%</td>
+                            <td class="score">82.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>3696</td>
+                            <td>セ  レ  ス</td>
+                            <td>2008.0</td>
+                            <td>6.70倍</td>
+                            <td>2.83倍</td>
+                            <td class="positive">4.08%</td>
+                            <td class="positive">30.05%</td>
+                            <td class="score">78.8</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>3135</td>
+                            <td>マーケットエンター</td>
+                            <td>1565.0</td>
+                            <td>12.70倍</td>
+                            <td>23.63倍</td>
+                            <td class="positive">-%</td>
+                            <td class="positive">47.74%</td>
+                            <td class="score">78.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>3452</td>
+                            <td>ビーロット</td>
+                            <td>1476.0</td>
+                            <td>6.30倍</td>
+                            <td>1.72倍</td>
+                            <td class="positive">4.76%</td>
+                            <td class="positive">24.35%</td>
+                            <td class="score">77.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>3223</td>
+                            <td>エスエルディー</td>
+                            <td>1098.0</td>
+                            <td>9.90倍</td>
+                            <td>3.18倍</td>
+                            <td class="positive">-%</td>
+                            <td class="positive">41.39%</td>
+                            <td class="score">76.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>3293</td>
+                            <td>アズマハウス</td>
+                            <td>785.0</td>
+                            <td>8.00倍</td>
+                            <td>0.37倍</td>
+                            <td class="positive">4.45%</td>
+                            <td class="positive">4.59%</td>
+                            <td class="score">74.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">13</td>
+                            <td>3991</td>
+                            <td>ウォンテッドリー</td>
+                            <td>1184.0</td>
+                            <td>7.30倍</td>
+                            <td>2.23倍</td>
+                            <td class="positive">1.68%</td>
+                            <td class="positive">31.36%</td>
+                            <td class="score">74.4</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">14</td>
+                            <td>3004</td>
+                            <td>神    栄</td>
+                            <td>2420.0</td>
+                            <td>6.10倍</td>
+                            <td>1.12倍</td>
+                            <td class="positive">4.48%</td>
+                            <td class="positive">17.64%</td>
+                            <td class="score">73.2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">15</td>
+                            <td>3633</td>
+                            <td>ＧＭＯペパボ</td>
+                            <td>2286.0</td>
+                            <td>13.80倍</td>
+                            <td>-倍</td>
+                            <td class="positive">4.66%</td>
+                            <td class="positive">35.08%</td>
+                            <td class="score">72.9</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">16</td>
+                            <td>3271</td>
+                            <td>ＴＨＥグローバル社</td>
+                            <td>893.0</td>
+                            <td>8.20倍</td>
+                            <td>2.65倍</td>
+                            <td class="positive">3.70%</td>
+                            <td class="positive">28.03%</td>
+                            <td class="score">72.6</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">17</td>
+                            <td>3280</td>
+                            <td>エストラスト</td>
+                            <td>1087.0</td>
+                            <td>5.10倍</td>
+                            <td>0.79倍</td>
+                            <td class="positive">2.55%</td>
+                            <td class="positive">13.63%</td>
+                            <td class="score">72.1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">18</td>
+                            <td>3238</td>
+                            <td>セントラル総合開発</td>
+                            <td>415.0</td>
+                            <td>7.90倍</td>
+                            <td>0.41倍</td>
+                            <td class="positive">3.85%</td>
+                            <td class="positive">4.88%</td>
+                            <td class="score">70.5</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">19</td>
+                            <td>3177</td>
+                            <td>ありがとうサービス</td>
+                            <td>3530.0</td>
+                            <td>6.40倍</td>
+                            <td>1.20倍</td>
+                            <td class="positive">3.81%</td>
+                            <td class="positive">16.76%</td>
+                            <td class="score">69.0</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="rank">20</td>
+                            <td>4337</td>
+                            <td>ぴ    あ</td>
+                            <td>2661.0</td>
+                            <td>15.10倍</td>
+                            <td>6.21倍</td>
+                            <td class="positive">0.75%</td>
+                            <td class="positive">37.31%</td>
+                            <td class="score">67.5</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+
+        <div class="disclaimer">
+            <h3>免責事項</h3>
+            <p>このレポートは情報提供のみを目的としており、投資推奨や投資助言を行うものではありません。</p>
+            <p>掲載された情報は過去のデータに基づく分析結果であり、将来の株価動向を保証するものではありません。</p>
+            <p>投資判断は必ず自己責任で行ってください。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</p>
+            <p>投資にはリスクが伴います。損失が発生する可能性があることをご理解の上、適切なリスク管理を行ってください。</p>
+            <p>本レポートの利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</p>
+        </div>
+
+        <footer>
+            <p>Generated by Swing Stock Screener</p>
+        </footer>
+    </div>
+</body>
+</html>
