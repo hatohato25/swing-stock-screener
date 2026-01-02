@@ -442,6 +442,65 @@
             text-shadow: 0 0 10px var(--glow-cyan);
         }
 
+        .ai-analysis-cta {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 40px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-analysis-cta::before {
+            content: '🤖';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+            opacity: 0.1;
+        }
+
+        .ai-analysis-cta h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            color: var(--accent-purple);
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .ai-analysis-cta p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.8;
+        }
+
+        .ai-analysis-button {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .ai-analysis-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+        }
+
+        .ai-analysis-button::before {
+            content: '🤖 ';
+        }
+
         .disclaimer {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
             border: 1px solid rgba(239, 68, 68, 0.2);
@@ -696,6 +755,11 @@
             <p class="date">{{ date }}</p>
         </header>
 
+        <!-- ナビゲーションリンク -->
+        <div style="margin-bottom: 40px;">
+            <a href="../index.html" class="back-link">📂 レポート一覧に戻る</a>
+        </div>
+
         <!-- Top Performers Dashboard -->
         <section class="top-performers-dashboard">
             <h2 class="dashboard-title">
@@ -829,6 +893,28 @@
                 </div>
             </div>
         </div>
+
+        <!-- AI分析CTAボタン -->
+        <div class="ai-analysis-cta" id="ai-analysis-cta" style="display: none;">
+            <h3>AI分析レポート</h3>
+            <p>Google Gemini AIによるレポートの詳細分析をご覧いただけます。<br>注目銘柄、リスク評価、投資戦略の提案が含まれています。</p>
+            <a href="ai_analysis.html" class="ai-analysis-button">AI分析を見る</a>
+        </div>
+
+        <script>
+            // ai_analysis.htmlが存在する場合のみボタンを表示
+            (function() {
+                fetch('ai_analysis.html', { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('ai-analysis-cta').style.display = 'block';
+                        }
+                    })
+                    .catch(() => {
+                        // エラー時は非表示のまま
+                    });
+            })();
+        </script>
 
         {% if rankings.volume_surge %}
         <section>

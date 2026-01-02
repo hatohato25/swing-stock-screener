@@ -102,7 +102,10 @@ source venv/bin/activate
 venv\Scripts\activate
 
 # 依存パッケージのインストール
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+
+# または、個別にインストールする場合
+pip3 install markdown>=3.5.0
 ```
 
 ### 3. 環境変数の設定
@@ -251,6 +254,106 @@ stock_codes = [stock["stock_code"] for stock in individual_stocks[:10]]
 # 全銘柄を処理する場合
 stock_codes = [stock["stock_code"] for stock in individual_stocks]
 ```
+
+---
+
+## 🤖 Gemini API連携によるレポート分析機能
+
+スクリーニングレポートをAI（Google Gemini 2.5 Flash Preview）で自動分析し、投資判断をサポートする機能を提供します。
+
+### 機能概要
+
+AI分析は以下の3つの視点で提供されます：
+
+1. **注目銘柄の選定（5銘柄程度）**
+   - 複数カテゴリで検出された銘柄を優先的に評価
+   - スコアが高く、RSI/MACDの組み合わせが良好な銘柄
+   - それぞれの注目理由を簡潔に説明
+
+2. **リスク評価**
+   - 逆張り戦略（BB下限反転）のリスクとリターンを評価
+   - ストップロス設定の推奨価格帯
+   - 流動性（平均出来高）の確認ポイント
+
+3. **投資戦略提案**
+   - 短期（1-5日）、中期（1-2週間）、長期（2週間以上）の時間軸別戦略
+   - 各カテゴリの特性に応じた保有期間の推奨
+   - エントリー・エグジット戦略の提案
+
+### APIキーの取得方法
+
+1. [Google AI Studio](https://aistudio.google.com/app/apikey) にアクセス
+2. Googleアカウントでログイン
+3. 「Create API Key」をクリックしてAPIキーを取得
+4. `.env`ファイルに`GEMINI_API_KEY`を追加
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### 使用方法
+
+#### CLI版（Phase 1: 現在利用可能）
+
+```bash
+# 最新レポートを分析
+python3 -m src.analysis.analyze_report
+
+# 特定日付のレポートを分析
+python3 -m src.analysis.analyze_report --date 2025-12-30
+
+# 結果をファイルに保存
+python3 -m src.analysis.analyze_report --save
+```
+
+#### 自動化版（Phase 2: 現在利用可能）
+
+GitHub Actionsでレポート生成時に自動的にAI分析を実行し、HTML形式で出力します。
+
+**設定方法**:
+
+1. **GitHub Secretsに`GEMINI_API_KEY`を追加**
+   - リポジトリページで **Settings** → **Secrets and variables** → **Actions** を開く
+   - **New repository secret** をクリック
+   - **Name**: `GEMINI_API_KEY`
+   - **Secret**: Google AI Studioで取得したAPIキー
+
+2. **（オプション）AI分析を有効化**
+   - GitHub Secretsに`ENABLE_AI_ANALYSIS`を追加
+   - **Name**: `ENABLE_AI_ANALYSIS`
+   - **Secret**: `true`
+   - デフォルトは`false`（無効）のため、有効化する場合のみ設定が必要です
+
+**動作確認**:
+- AI分析が有効な場合、レポートページ（`index.html`）に「AI分析を見る」ボタンが表示されます
+- ボタンをクリックすると、AI分析レポート（`ai_analysis.html`）が表示されます
+
+**ローカルでの自動実行**:
+```bash
+# 環境変数を設定してから実行
+export ENABLE_AI_ANALYSIS=true
+export GEMINI_API_KEY=your_api_key_here
+
+# メインスクリプトを実行（レポート生成後にAI分析も自動実行）
+python3 -m src.main
+```
+
+### 免責事項
+
+- この分析はAIによって生成されたものであり、情報提供のみを目的としています。
+- 専門的な投資助言に代わるものではありません。
+- 投資判断は必ず自己責任で行ってください。
+- AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。
+- 本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。
+
+### 無料枠の制限
+
+Google Gemini APIの無料枠は以下の通りです：
+
+- **1分あたり**: 15リクエスト
+- **1日あたり**: 1500リクエスト
+
+1日1回のレポート生成であれば、十分に余裕があります。
 
 ---
 

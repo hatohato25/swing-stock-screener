@@ -4,10 +4,11 @@
 スクリーニング結果からHTMLレポートとMarkdownレポートを生成します。
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pathlib import Path
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
+import markdown
 from src.utils.logger import Logger
 
 
@@ -465,3 +466,59 @@ class ReportGenerator:
 """
 
         return html
+
+    def generate_ai_analysis_html(
+        self, report_date: str, ai_analysis_md_path: Optional[Path] = None
+    ) -> bool:
+        """
+        AI分析結果のHTML出力を生成
+
+        Args:
+            report_date: レポート日付（YYYY-MM-DD形式）
+            ai_analysis_md_path: AI分析Markdownファイルのパス（Noneの場合は自動検出）
+
+        Returns:
+            成功時True、失敗時False
+        """
+        try:
+            # AI分析Markdownファイルのパス
+            if ai_analysis_md_path is None:
+                ai_analysis_md_path = self.output_dir / report_date / "ai_analysis.md"
+
+            # ファイルが存在しない場合はスキップ
+            if not ai_analysis_md_path.exists():
+                self.logger.warning(f"AI分析ファイルが存在しません: {ai_analysis_md_path}")
+                return False
+
+            # Markdownを読み込み
+            markdown_content = ai_analysis_md_path.read_text(encoding="utf-8")
+
+            # Markdown → HTML変換
+            html_content_body = markdown.markdown(
+                markdown_content,
+                extensions=[
+                    'fenced_code',
+                    'tables',
+                    'nl2br'
+                ]
+            )
+
+            # Jinja2テンプレートを使用してHTML生成
+            template = self.env.get_template("ai_analysis.html")
+            context = {
+                "date": report_date,
+                "analysis_content": html_content_body
+            }
+
+            html_full = template.render(context)
+
+            # HTML保存
+            output_file = self.output_dir / report_date / "ai_analysis.html"
+            output_file.write_text(html_full, encoding="utf-8")
+
+            self.logger.info(f"AI分析HTML生成完了: {output_file}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"AI分析HTML生成に失敗: {e}", exc_info=True)
+            return False

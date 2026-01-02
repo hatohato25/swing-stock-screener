@@ -68,6 +68,8 @@ jobs:
           TACHIBANA_ENVIRONMENT: ${{ secrets.TACHIBANA_ENVIRONMENT }}
           REPORT_OUTPUT_DIR: docs
           LOG_LEVEL: INFO
+          ENABLE_AI_ANALYSIS: ${{ secrets.ENABLE_AI_ANALYSIS || 'false' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "📊 スクリーニングを開始します"
           python3 -m src.main

@@ -125,3 +125,8 @@ class Config:
         """レポート出力ディレクトリを取得する"""
         output_dir = self.get("REPORT_OUTPUT_DIR", "docs")
         return self.project_root / output_dir
+
+    @property
+    def enable_ai_analysis(self) -> bool:
+        """AI分析の有効/無効を取得する（デフォルト: false）"""
+        return self.get("ENABLE_AI_ANALYSIS", "false").lower() == "true"

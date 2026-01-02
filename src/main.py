@@ -429,6 +429,39 @@ def main():
 
             logger.info(f"✅ レポート生成完了: {len(screened_stocks)}件")
             print(f"✅ レポート生成完了: docs/{report_date}/")
+
+            # 8. AI分析実行（Phase 2: オプション）
+            if config.enable_ai_analysis:
+                try:
+                    import os
+                    from pathlib import Path
+                    from src.analysis.ai_analyzer import GeminiReportAnalyzer
+
+                    api_key = os.getenv("GEMINI_API_KEY")
+                    if api_key:
+                        logger.info("AI分析を開始します")
+                        print("⏳ AI分析実行中（Gemini API呼び出し）...")
+
+                        analyzer = GeminiReportAnalyzer(api_key, logger)
+                        analysis_result = analyzer.analyze(report_date=report_date)
+
+                        # 結果を保存
+                        save_path = Path(config.report_output_dir) / report_date / "ai_analysis.md"
+                        save_path.write_text(analysis_result, encoding="utf-8")
+
+                        logger.info(f"✅ AI分析結果を保存しました: {save_path}")
+                        print(f"✅ AI分析完了: docs/{report_date}/ai_analysis.md")
+
+                        # HTML出力生成
+                        if generator.generate_ai_analysis_html(report_date):
+                            print(f"✅ AI分析HTML生成完了: docs/{report_date}/ai_analysis.html")
+                    else:
+                        logger.warning("GEMINI_API_KEY が設定されていないため、AI分析をスキップしました。")
+                        print("⚠️  GEMINI_API_KEY が設定されていません。AI分析をスキップします。")
+                except Exception as e:
+                    logger.error(f"AI分析中にエラーが発生しましたが、レポート生成は成功しました: {e}", exc_info=True)
+                    print(f"⚠️  AI分析失敗（レポート生成は成功）: {e}")
+                    # AI分析失敗時も全体処理は成功とする（sys.exitしない）
         else:
             logger.info("該当銘柄なし: レポート生成をスキップ")
             print("ℹ️  該当銘柄なし: レポート生成をスキップ")
@@ -438,7 +471,7 @@ def main():
         print(f"❌ レポート生成に失敗: {e}")
         sys.exit(1)
 
-    # 8. 統計情報
+    # 9. 統計情報
     elapsed_time = time.time() - start_time
     logger.info("=" * 60)
     logger.info(f"処理完了: 所要時間 {elapsed_time:.1f}秒")
