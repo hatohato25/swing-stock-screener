@@ -154,6 +154,30 @@
             color: var(--accent-cyan);
         }
 
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 24px var(--glow-cyan);
+            transform: translateX(-4px);
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
         .info-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
