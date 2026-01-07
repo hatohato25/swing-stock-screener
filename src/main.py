@@ -195,13 +195,27 @@ def main():
         logger.info(f"個別株フィルタリング完了: {len(individual_stocks)}件")
         print(f"✅ 個別株: {len(individual_stocks)}件")
 
+        # 業種フィルタリング
+        logger.info("業種フィルタリングを開始します")
+        print("⏳ 業種フィルタリング中（対象4業種のみ抽出）...")
+
+        filtered_stocks = stock_filter.filter_by_sector(individual_stocks)
+
+        logger.info(f"業種フィルタリング完了: {len(filtered_stocks)}件")
+        print(f"✅ 対象業種の銘柄: {len(filtered_stocks)}件")
+
         # 上位10件の銘柄名を表示（動作確認用）
-        print("\n--- 個別株サンプル（上位10件） ---")
-        for i, stock in enumerate(individual_stocks[:10], 1):
+        print("\n--- フィルタリング後サンプル（上位10件） ---")
+        for i, stock in enumerate(filtered_stocks[:10], 1):
             code = stock.get("sIssueCode", "N/A")
             name = stock.get("sIssueName", "N/A")
-            print(f"  {i}. {code}: {name}")
+            sector_code = stock.get("sGyousyuCode", "N/A")
+            sector_name = stock_filter.ALLOWED_SECTORS.get(sector_code, "不明")
+            print(f"  {i}. {code}: {name} [{sector_name}]")
         print("---\n")
+
+        # フィルタリング後の銘柄リストを後続処理で使用
+        individual_stocks = filtered_stocks
 
     except Exception as e:
         logger.error(f"個別株フィルタリングに失敗: {e}", exc_info=True)

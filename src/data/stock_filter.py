@@ -45,6 +45,14 @@ class StockFilter:
         "ニッチトップ",  # ニッチトップETF
     ]
 
+    # 許可する業種コード
+    ALLOWED_SECTORS = {
+        "3650": "電気機器",
+        "3800": "その他製品",
+        "5250": "情報・通信業",
+        "9050": "サービス業",
+    }
+
     def __init__(self, logger: Logger):
         """
         銘柄フィルターを初期化する
@@ -139,6 +147,55 @@ class StockFilter:
                         f"無効コード={excluded_by_invalid_code}件")
 
         return individual_stocks
+
+    def filter_by_sector(self, stocks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        業種コードによるフィルタリング（許可された業種のみ抽出）
+
+        Args:
+            stocks: 銘柄リスト
+
+        Returns:
+            許可された業種の銘柄リスト
+
+        Example:
+            >>> filter = StockFilter(logger)
+            >>> stocks = [
+            ...     {"sIssueCode": "6758", "sIssueName": "ソニー", "sGyousyuCode": "3650"},
+            ...     {"sIssueCode": "7203", "sIssueName": "トヨタ", "sGyousyuCode": "3050"},
+            ... ]
+            >>> filtered = filter.filter_by_sector(stocks)
+            >>> len(filtered)  # ソニーのみ該当
+            1
+        """
+        filtered_stocks = []
+        sector_counts = {}  # 業種別の銘柄数をカウント
+
+        for stock in stocks:
+            sector_code = stock.get("sGyousyuCode", "")
+
+            # 許可された業種のみ追加
+            if sector_code in self.ALLOWED_SECTORS:
+                filtered_stocks.append(stock)
+
+                # 業種別カウント
+                sector_name = self.ALLOWED_SECTORS[sector_code]
+                sector_counts[sector_name] = sector_counts.get(sector_name, 0) + 1
+
+        # フィルタリング結果のログ出力
+        self.logger.info(
+            f"業種フィルタリング完了: {len(stocks)}件 → {len(filtered_stocks)}件"
+        )
+
+        # 業種別の銘柄数を表示
+        if sector_counts:
+            self.logger.info("  業種別内訳:")
+            for sector_name, count in sorted(sector_counts.items()):
+                self.logger.info(f"    {sector_name}: {count}件")
+        else:
+            self.logger.warning("  ⚠️  該当する業種の銘柄がありません")
+
+        return filtered_stocks
 
     def is_individual_stock(self, stock: Dict[str, Any]) -> bool:
         """
