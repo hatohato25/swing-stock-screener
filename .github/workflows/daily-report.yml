@@ -61,6 +61,42 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: 既存レポート一覧の取得
+        run: |
+          echo "📋 gh-pagesブランチから既存レポート一覧を取得します"
+
+          # gh-pagesブランチが存在するかチェック
+          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            echo "gh-pagesブランチが存在します。既存レポート一覧を取得します。"
+
+            # gh-pagesブランチを取得（shallow cloneで高速化）
+            git fetch --depth=1 origin gh-pages:gh-pages
+            git checkout gh-pages
+
+            # 日付形式のディレクトリ（YYYY-MM-DD）を検索してJSON配列として保存
+            # index.htmlが存在するディレクトリのみを対象とする
+            existing_dates=$(find . -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]' | \
+              while read dir; do
+                if [ -f "$dir/index.html" ]; then
+                  basename "$dir"
+                fi
+              done | jq -R -s -c 'split("\n") | map(select(length > 0))' || echo '[]')
+
+            # mainブランチに戻る
+            git checkout main
+
+            # docs/ディレクトリを作成して.existing_reports.jsonを保存
+            mkdir -p docs
+            echo "$existing_dates" > docs/.existing_reports.json
+
+            echo "既存レポート一覧:"
+            cat docs/.existing_reports.json
+          else
+            echo "gh-pagesブランチが存在しません。空のリストを作成します。"
+            mkdir -p docs
+            echo '[]' > docs/.existing_reports.json
+          fi
+
       - name: スクリーニング実行
         env:
           TACHIBANA_USER_ID: ${{ secrets.TACHIBANA_USER_ID }}

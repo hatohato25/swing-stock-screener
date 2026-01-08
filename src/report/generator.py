@@ -340,18 +340,44 @@ class ReportGenerator:
         """
         既存のレポート日付を取得
 
-        Returns:
-            レポート日付のリスト
-        """
-        if not self.output_dir.exists():
-            return []
+        GitHub Actions環境では`.existing_reports.json`から読み込み、
+        ローカル環境では`docs/`ディレクトリをスキャンする。
+        両方の結果を統合して重複を削除する。
 
+        Returns:
+            レポート日付のリスト（降順ソート済み）
+        """
         report_dates = []
-        for item in self.output_dir.iterdir():
-            if item.is_dir() and len(item.name) == 10 and item.name.count("-") == 2:
-                # index.htmlが存在するかチェック
-                if (item / "index.html").exists():
-                    report_dates.append(item.name)
+
+        # 1. .existing_reports.jsonから既存レポート一覧を読み込む（GitHub Actions用）
+        existing_reports_file = self.output_dir / ".existing_reports.json"
+        if existing_reports_file.exists():
+            try:
+                import json
+                with open(existing_reports_file, "r", encoding="utf-8") as f:
+                    existing_dates = json.load(f)
+                    if isinstance(existing_dates, list):
+                        report_dates.extend(existing_dates)
+                        self.logger.info(f"既存レポート一覧を読み込みました: {len(existing_dates)}件")
+                    else:
+                        self.logger.warning(
+                            f".existing_reports.jsonの形式が不正です: {type(existing_dates)}"
+                        )
+            except json.JSONDecodeError as e:
+                self.logger.warning(f".existing_reports.jsonのJSON解析に失敗: {e}")
+            except Exception as e:
+                self.logger.warning(f".existing_reports.jsonの読み込みに失敗: {e}")
+
+        # 2. ローカルのdocs/ディレクトリもスキャン（ローカル開発環境用 & 補完用）
+        if self.output_dir.exists():
+            for item in self.output_dir.iterdir():
+                if item.is_dir() and len(item.name) == 10 and item.name.count("-") == 2:
+                    # index.htmlが存在するかチェック
+                    if (item / "index.html").exists() and item.name not in report_dates:
+                        report_dates.append(item.name)
+
+        # 重複削除してソート（降順）
+        report_dates = sorted(set(report_dates), reverse=True)
 
         return report_dates
 
