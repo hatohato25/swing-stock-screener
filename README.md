@@ -6,6 +6,9 @@
 
 ## [DEMO](https://hatohato25.github.io/swing-stock-screener/)
 
+<img width="450" alt="スクリーンショット 2026-01-13 1 16 25" src="https://github.com/user-attachments/assets/b6e42994-6397-4127-b196-6a0de9045a43" />
+<img width="385" alt="スクリーンショット 2026-01-13 1 16 49" src="https://github.com/user-attachments/assets/151bdc94-8e73-4858-934f-6979d8ac04ae" />
+
 ---
 
 ## 📊 機能
