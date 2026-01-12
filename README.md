@@ -170,7 +170,7 @@ python3 -m src.main
 **処理時間の目安**:
 - マスターデータ取得: 約20秒
 - 個別株フィルタリング: 約1秒
-- 株価データ取得（1,000件）: 約10分
+- 株価データ取得: 約5分
 
 成功すると、スクリーニング結果がコンソールに表示されます。
 
@@ -203,7 +203,7 @@ python3 -m src.main
 
 **処理時間の目安**:
 - マスターデータ取得: 約20秒
-- 株価データ取得（1,000件）: 約10分
+- 株価データ取得（1,000件）: 約5分
 - レポート生成: 約10秒
 
 ---
@@ -549,13 +549,6 @@ black src/ tests/
 ## 🙏 謝辞
 
 - [立花証券e支店API](https://kabuka.e-shiten.jp/) - 無料で利用できる日本株API
-- [jpholiday](https://github.com/Lalcs/jpholiday) - 日本の祝日ライブラリ
-
----
-
-## 📞 サポート
-
-質問や問題がある場合は、[Issues](https://github.com/yourusername/swing-stock-screener/issues)で報告してください。
 
 ---
 
