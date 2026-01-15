@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI分析レポート - 2026-01-15</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #121824;
+            --bg-card: #1a2332;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ba3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glow-green: rgba(16, 185, 129, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0a0e17 0%, #12182e 100%);
+            background-attachment: fixed;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            position: relative;
+            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '🤖 ';
+            color: var(--accent-purple);
+        }
+
+        .date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .date::before {
+            content: '[ ';
+            color: var(--accent-purple);
+        }
+
+        .date::after {
+            content: ' ]';
+            color: var(--accent-purple);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 24px var(--glow-cyan);
+            transform: translateX(-4px);
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
+        .ai-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+        }
+
+        .ai-content h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-subtle);
+            letter-spacing: 0.02em;
+        }
+
+        .ai-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .ai-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .ai-content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .ai-content ul, .ai-content ol {
+            color: var(--text-secondary);
+            margin-left: 24px;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .ai-content ul li, .ai-content ol li {
+            margin-bottom: 8px;
+        }
+
+        .ai-content strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .ai-content em {
+            color: var(--accent-amber);
+            font-style: italic;
+        }
+
+        .ai-content code {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .ai-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .ai-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .ai-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .ai-content table th,
+        .ai-content table td {
+            border: 1px solid var(--border-subtle);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .ai-content table th {
+            background: var(--bg-secondary);
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .ai-content table td {
+            color: var(--text-secondary);
+        }
+
+        .disclaimer {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disclaimer::before {
+            content: '⚠';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+            color: var(--accent-red);
+            opacity: 0.1;
+        }
+
+        .disclaimer h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .disclaimer p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+        }
+
+        footer::before {
+            content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+            display: block;
+            color: var(--border-subtle);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .ai-content {
+                padding: 24px;
+            }
+
+            .ai-content h2 {
+                font-size: 20px;
+            }
+
+            .ai-content h3 {
+                font-size: 18px;
+            }
+
+            .disclaimer {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI分析レポート</h1>
+            <p class="date">2026-01-15</p>
+        </header>
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px;">
+            <a href="index.html" class="back-link">📊 日次レポートに戻る</a>
+            <a href="../index.html" class="back-link">📂 レポート一覧に戻る</a>
+        </div>
+
+        <div class="ai-content">
+            <p>ご提示いただいたスクリーニングレポートに基づき、プロのアナリストの視点からスウィング取引に特化した分析結果をまとめました。</p>
+<p>本日のレポートでは、<strong>「過熱感のあるモメンタム銘柄」</strong>と<strong>「底値圏からの反転を狙う逆張り銘柄」</strong>が明確に分かれています。リスク管理を優先しつつ、期待値の高い銘柄を絞り込みます。</p>
+<hr />
+<h2>1. 注目銘柄の選定（5銘柄）</h2>
+<p>複数カテゴリで検出、またはテクニカル・指標のバランスが秀逸な5銘柄を厳選しました。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">銘柄名 (コード)</th>
+<th style="text-align: left;">検出カテゴリ</th>
+<th style="text-align: left;">注目理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>note (5243)</strong></td>
+<td style="text-align: left;">出来高急増 / ブレイクアウト</td>
+<td style="text-align: left;">出来高7.2倍の爆発を伴う25日線突破。スコア100の最上位。短期的な過熱感はあるが、トレンド転換の初動として極めて強い。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>アイドマHD (7373)</strong></td>
+<td style="text-align: left;">出来高急増 / インフレバリュー</td>
+<td style="text-align: left;">出来高急増かつRSI(35.37)が低く、割安感（PER16倍）も維持。他の急騰銘柄に比べ「高値掴み」のリスクが低く、値幅が期待できる。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>メイコー (6787)</strong></td>
+<td style="text-align: left;">BB下限反転</td>
+<td style="text-align: left;">RSI 20.32と明確な「売られ過ぎ」。MACDの改善が見られ、1万円の大台付近での底打ちからリバウンドを狙える絶好のポイント。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sansan (4443)</strong></td>
+<td style="text-align: left;">出来高急増 / ブレイクアウト</td>
+<td style="text-align: left;">出来高6.6倍を伴う上昇。RSI(73)は高めだが、MACDのヒストグラム改善が顕著。機関投資家の買い戻しが本格化している兆候。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>テクノロジーズ (5248)</strong></td>
+<td style="text-align: left;">ブレイクアウト / インフレバリュー</td>
+<td style="text-align: left;">高ROE(39%)を背景とした成長株。テクニカル面でも25日線を明確に上抜けており、ファンダメンタルズの裏付けがある上昇。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. リスク評価</h2>
+<h3>逆張り戦略（BB下限反転）のリスクとリターン</h3>
+<ul>
+<li><strong>リスク</strong>: 6787 メイコーや6630 ヤーマンなどは、強い下降トレンドの途中の「一時的な反発」に終わるリスクがあります（デッド・キャット・バウンス）。</li>
+<li><strong>リターン</strong>: ボリンジャーバンド中央線（25日線）までの自律反発だけでも5〜10%程度の利幅が狙えます。</li>
+</ul>
+<h3>ストップロス設定の推奨</h3>
+<ul>
+<li><strong>順張り（note等）</strong>: エントリー価格の <strong>-5%</strong> または <strong>当日安値割れ</strong>。</li>
+<li><strong>逆張り（メイコー等）</strong>: 直近安値（BB下限をさらに割り込む水準）から <strong>-2%</strong>。反転しなかった場合は即撤退が鉄則です。</li>
+</ul>
+<h3>流動性の確認ポイント</h3>
+<ul>
+<li>7087 ウイルテック等は当日出来高は増えていますが、<strong>平均出来高が1万株未満</strong>と非常に薄いです。スウィング取引では「売りたい時に売れない」リスクがあるため、平均出来高10万株以上の銘柄を優先すべきです。</li>
+</ul>
+<hr />
+<h2>3. 投資戦略提案</h2>
+<p>相場全体のボラティリティを考慮し、時間軸別に以下の戦略を提案します。</p>
+<h3>🕒 短期戦略（1-5日間保有）</h3>
+<ul>
+<li><strong>ターゲット</strong>: 5243 note、4422 VALUENEX</li>
+<li><strong>戦略</strong>: モメンタム追随。RSIが90近いため、翌日の寄り付き直後の押し目を拾い、数日のオーバーシュート（急騰）で利確。</li>
+<li><strong>エグジット</strong>: RSIが横ばい、または5分足で25本移動平均線を割り込んだら手仕舞い。</li>
+</ul>
+<h3>📅 中期戦略（1-2週間保有）</h3>
+<ul>
+<li><strong>ターゲット</strong>: 6787 メイコー、6630 ヤーマン</li>
+<li><strong>戦略</strong>: 逆張りリバウンド。RSIが30を回復し、MACDがゴールデンクロスするタイミングまで保持。</li>
+<li><strong>エグジット</strong>: ボリンジャーバンドの25日移動平均線（中央線）付近での利益確定。</li>
+</ul>
+<h3>収益最大化戦略（2週間以上〜）</h3>
+<ul>
+<li><strong>ターゲット</strong>: 7373 アイドマHD、5248 テクノロジーズ</li>
+<li><strong>戦略</strong>: バリュー＆グロースのハイブリッド投資。ファンダメンタルズ（ROE/PER）を背景に、トレンドの継続を確認しながら利益を伸ばす。</li>
+<li><strong>エグジット</strong>: 25日移動平均線を終値で割り込むまでホールド。</li>
+</ul>
+<hr />
+<p><strong>アナリストの総評</strong>:<br />
+今回のリストは非常に攻撃的な銘柄（RSI高騰銘柄）が多いのが特徴です。<strong>note(5243)</strong> や <strong>VALUENEX(4422)</strong> は魅力的ですが、明日以降の「押し目」を待たずに飛びつくと、高値掴みのリスクが高まります。安定性を求めるなら、<strong>アイドマHD(7373)</strong> や <strong>メイコー(6787)</strong> のような、価格調整が済んだ銘柄からのアプローチを推奨します。</p>
+<hr />
+<h2>免責事項</h2>
+<ul>
+<li>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</li>
+<li>専門的な投資助言に代わるものではありません。</li>
+<li>投資判断は必ず自己責任で行ってください。</li>
+<li>AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</li>
+<li>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</li>
+</ul>
+        </div>
+
+        <div class="disclaimer">
+            <h3>免責事項</h3>
+            <p>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</p>
+            <p>専門的な投資助言に代わるものではありません。</p>
+            <p>投資判断は必ず自己責任で行ってください。AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</p>
+            <p>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</p>
+        </div>
+
+        <footer>
+            <p>Powered by Google Gemini 2.5 Flash Preview</p>
+        </footer>
+    </div>
+</body>
+</html>
