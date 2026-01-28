@@ -41,7 +41,7 @@ class GeminiReportAnalyzer:
             "https://generativelanguage.googleapis.com/v1beta/models/"
             "gemini-3-flash-preview:generateContent"
         )
-        self.timeout = 30  # タイムアウト（秒）
+        self.timeout = 60  # タイムアウト（秒）
 
     def read_latest_report(self, docs_dir: str = "docs") -> tuple[str, str]:
         """
