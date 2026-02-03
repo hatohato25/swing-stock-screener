@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI分析レポート - 2026-02-03</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #121824;
+            --bg-card: #1a2332;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ba3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glow-green: rgba(16, 185, 129, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0a0e17 0%, #12182e 100%);
+            background-attachment: fixed;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            position: relative;
+            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '🤖 ';
+            color: var(--accent-purple);
+        }
+
+        .date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .date::before {
+            content: '[ ';
+            color: var(--accent-purple);
+        }
+
+        .date::after {
+            content: ' ]';
+            color: var(--accent-purple);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 24px var(--glow-cyan);
+            transform: translateX(-4px);
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
+        .ai-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+        }
+
+        .ai-content h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-subtle);
+            letter-spacing: 0.02em;
+        }
+
+        .ai-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .ai-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .ai-content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .ai-content ul, .ai-content ol {
+            color: var(--text-secondary);
+            margin-left: 24px;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .ai-content ul li, .ai-content ol li {
+            margin-bottom: 8px;
+        }
+
+        .ai-content strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .ai-content em {
+            color: var(--accent-amber);
+            font-style: italic;
+        }
+
+        .ai-content code {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .ai-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .ai-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .ai-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .ai-content table th,
+        .ai-content table td {
+            border: 1px solid var(--border-subtle);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .ai-content table th {
+            background: var(--bg-secondary);
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .ai-content table td {
+            color: var(--text-secondary);
+        }
+
+        .disclaimer {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disclaimer::before {
+            content: '⚠';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+            color: var(--accent-red);
+            opacity: 0.1;
+        }
+
+        .disclaimer h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .disclaimer p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+        }
+
+        footer::before {
+            content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+            display: block;
+            color: var(--border-subtle);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .ai-content {
+                padding: 24px;
+            }
+
+            .ai-content h2 {
+                font-size: 20px;
+            }
+
+            .ai-content h3 {
+                font-size: 18px;
+            }
+
+            .disclaimer {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI分析レポート</h1>
+            <p class="date">2026-02-03</p>
+        </header>
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px;">
+            <a href="index.html" class="back-link">📊 日次レポートに戻る</a>
+            <a href="../index.html" class="back-link">📂 レポート一覧に戻る</a>
+        </div>
+
+        <div class="ai-content">
+            <p>ご提示いただいたスクリーニングレポートを詳細に分析しました。<br />
+本日の市場環境（2026-02-03）に基づき、スウィング取引に特化した投資判断を以下の3つの視点でサポートします。</p>
+<hr />
+<h1>📊 株式分析レポート：2026年2月3日版</h1>
+<h2>1. 注目銘柄の選定（厳選5銘柄）</h2>
+<p>複数カテゴリでの重複検出、およびテクニカル・ファンダメンタルズのバランスを重視して選定しました。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">銘柄コード</th>
+<th style="text-align: left;">銘柄名</th>
+<th style="text-align: left;">抽出カテゴリ</th>
+<th style="text-align: left;">注目理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>3640</strong></td>
+<td style="text-align: left;"><strong>電算</strong></td>
+<td style="text-align: left;">出来高 / Breakout / インフレ</td>
+<td style="text-align: left;"><strong>三冠達成の最注目株。</strong> 出来高急増を伴うブレイクアウトに加え、PER 4.6倍、ROE 35.4%という驚異的なバリュー・成長性を兼備。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3769</strong></td>
+<td style="text-align: left;"><strong>GMOペイメント</strong></td>
+<td style="text-align: left;">BB下限反転</td>
+<td style="text-align: left;"><strong>王道の逆釣り候補。</strong> BB下限反転カテゴリ1位。RSI 23.6と売られ過ぎ水準からのMACD改善。値嵩株だが自律反発の期待値が高い。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>6200</strong></td>
+<td style="text-align: left;"><strong>インソース</strong></td>
+<td style="text-align: left;">BB下限反転 / インフレ</td>
+<td style="text-align: left;"><strong>高ROEの押し目買い。</strong> ROE 37.0%の高収益企業がBB下限まで下落。配当利回り4.17%が下値支えとなり、反転の信頼性が高い。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3968</strong></td>
+<td style="text-align: left;"><strong>セグエグループ</strong></td>
+<td style="text-align: left;">出来高 / インフレ</td>
+<td style="text-align: left;"><strong>底値圏の初動。</strong> 出来高急増ランキングに入りつつ、RSIは30.36と底値圏。高ROE（38.4%）を背景に、トレンド転換の初動となる可能性。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>6741</strong></td>
+<td style="text-align: left;"><strong>日本信号</strong></td>
+<td style="text-align: left;">出来高 / Breakout</td>
+<td style="text-align: left;"><strong>トレンド追随。</strong> 出来高比率5.2倍を伴う25日線突破。RSI 69と過熱感も出始めたが、MACDがプラス転換しており、短期的な上値追いが期待できる。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. リスク評価</h2>
+<p>スウィング取引において、特に今回の「BB下限反転」を活用する際の注意点をまとめます。</p>
+<h3>⚠️ 逆張り戦略（BB下限反転）のリスクとリターン</h3>
+<ul>
+<li><strong>リスク：</strong> 「落ちるナイフ」を掴むリスクがあります。特にMACDの改善が微弱な場合、安値更新が続く「バンドウォーク（下落）」に巻き込まれる可能性があります。</li>
+<li><strong>リターン：</strong> 25日移動平均線までの自律反発（リバウンド）を狙うため、短期間で5〜10%程度の利益確定が狙いやすい戦略です。</li>
+</ul>
+<h3>🛑 ストップロス設定の推奨</h3>
+<ul>
+<li><strong>原則：</strong> エントリー時の直近安値を終値ベースで割り込んだら即撤退。</li>
+<li><strong>目安：</strong> <ul>
+<li><strong>逆張り（BB下限）：</strong> 買値から <strong>-3%</strong> またはBB下限-2σを明確に下抜けた場合。</li>
+<li><strong>順張り（ブレイクアウト）：</strong> 25日移動平均線を下回った場合。</li>
+</ul>
+</li>
+</ul>
+<h3>💧 流動性（平均出来高）の確認ポイント</h3>
+<ul>
+<li>スクリーニング条件で10万株以上となっていますが、<strong>6647（森尾電機：4,700株）</strong>のような急増しても絶対数が少ない銘柄は、出口戦略（売りたい時に売れない）のリスクが高いため、個人投資家は避けるのが無難です。</li>
+</ul>
+<hr />
+<h2>3. 投資戦略提案</h2>
+<p>時間軸とカテゴリを組み合わせた戦略を提案します。</p>
+<h3>⏳ 時間軸別戦略</h3>
+<h4>【短期：1-5日】モメンタム戦略</h4>
+<ul>
+<li><strong>対象カテゴリ：</strong> 出来高急増、テクニカルブレイクアウト</li>
+<li><strong>推奨銘柄：</strong> 3640 電算、6741 日本信号</li>
+<li><strong>戦略：</strong> 本日の出来高急増に乗じ、前日の高値を上抜ける局面でエントリー。利益が乗れば早めに半分利確し、残りを25日線乖離まで追う。</li>
+</ul>
+<h4>【中期：1-2週間】リバウンド・スウィング戦略</h4>
+<ul>
+<li><strong>対象カテゴリ：</strong> BB下限反転、インフレ対応バリュー</li>
+<li><strong>推奨銘柄：</strong> 3769 GMOペイメント、6200 インソース</li>
+<li><strong>戦略：</strong> 下げ止まりを確認した翌日から打診買い。5日移動平均線が上向きになるタイミングで本玉を投入。目標値はボリンジャーバンドの中央線（25日線）。</li>
+</ul>
+<h4>【長期：2週間以上】クオリティ・バリュー戦略</h4>
+<ul>
+<li><strong>対象カテゴリ：</strong> インフレ対応バリュー（高ROE銘柄）</li>
+<li><strong>推奨銘柄：</strong> 3640 電算、3912 モバイルファクトリー</li>
+<li><strong>戦略：</strong> 業績背景が強く、PER/PBRに割安感があるため、多少の調整は許容して現物で保有。配当を取りつつ、トレンドが崩れるまでホールド。</li>
+</ul>
+<hr />
+<h3>💡 エントリー・エグジットの総括</h3>
+<ul>
+<li><strong>エントリー：</strong> 寄付き直後の乱高下を避け、10時以降の安定した価格帯で「出来高が継続しているか」を確認してから執行してください。</li>
+<li><strong>エグジット：</strong> 目標株価に達しなくても、<strong>「保有期間が2週間を超えて横ばい」</strong>になった場合は、資金効率の観点から一度クローズし、次の銘柄へ資金を回転させることを推奨します。</li>
+</ul>
+<hr />
+<p><strong>アナリスト・コメント：</strong><br />
+本日のリストでは、特に<strong>3640 電算</strong>がテクニカル・ファンダメンタルズ共に非常に強いシグナルを出しています。また、<strong>3769 GMOペイメント</strong>のような主力株の売られ過ぎは、市場全体の反発局面で先導役になる可能性があるため、監視リストの最上位に置くべきです。</p>
+<hr />
+<h2>免責事項</h2>
+<ul>
+<li>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</li>
+<li>専門的な投資助言に代わるものではありません。</li>
+<li>投資判断は必ず自己責任で行ってください。</li>
+<li>AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</li>
+<li>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</li>
+</ul>
+        </div>
+
+        <div class="disclaimer">
+            <h3>免責事項</h3>
+            <p>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</p>
+            <p>専門的な投資助言に代わるものではありません。</p>
+            <p>投資判断は必ず自己責任で行ってください。AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</p>
+            <p>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</p>
+        </div>
+
+        <footer>
+            <p>Powered by Google Gemini 2.5 Flash Preview</p>
+        </footer>
+    </div>
+</body>
+</html>
