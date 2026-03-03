@@ -34,12 +34,12 @@ class GeminiReportAnalyzer:
         """
         self.api_key = api_key
         self.logger = logger
-        # 無料プランで利用可能: gemini-3-flash-preview
+        # 無料プランで利用可能: gemini-3.1-flash-lite-preview
         # "inputTokenLimit": 1048576,
         # "outputTokenLimit": 65536,
         self.api_url = (
             "https://generativelanguage.googleapis.com/v1beta/models/"
-            "gemini-3-flash-preview:generateContent"
+            "gemini-3.1-flash-lite-preview:generateContent"
         )
         self.timeout = 60  # タイムアウト（秒）
 
