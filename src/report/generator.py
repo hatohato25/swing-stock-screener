@@ -381,9 +381,56 @@ class ReportGenerator:
 
         return report_dates
 
+    # 日本語曜日マッピング（weekday()の戻り値0=月曜から6=日曜に対応）
+    _WEEKDAY_JA = ["月", "火", "水", "木", "金", "土", "日"]
+
+    def _format_date_with_weekday(self, date_str: str) -> str:
+        """
+        日付文字列に日本語曜日を付与して返す
+
+        曜日を表示することで、週次のパターンを視覚的に把握しやすくするために付与する。
+
+        Args:
+            date_str: "YYYY-MM-DD" 形式の日付文字列
+
+        Returns:
+            "YYYY-MM-DD (曜)" 形式の文字列
+        """
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        weekday_ja = self._WEEKDAY_JA[dt.weekday()]
+        return f"{date_str} ({weekday_ja})"
+
+    def _group_dates_by_month(
+        self, dates: List[str]
+    ) -> List[tuple[str, List[str]]]:
+        """
+        日付リストを月単位でグループ化して返す
+
+        月別グルーピングにより、日付が増えても縦方向の肥大化を防ぐために使用する。
+
+        Args:
+            dates: "YYYY-MM-DD" 形式の降順日付リスト
+
+        Returns:
+            ("YYYY年MM月", ["YYYY-MM-DD", ...]) のタプルリスト（新しい月が先頭）
+        """
+        # 挿入順序を保持しながら月ごとに日付を集約する
+        # 降順リストを順に処理するため、自然と新しい月が先頭になる
+        month_map: Dict[str, List[str]] = {}
+        for date_str in dates:
+            dt = datetime.strptime(date_str, "%Y-%m-%d")
+            month_key = f"{dt.year}年{dt.month:02d}月"
+            if month_key not in month_map:
+                month_map[month_key] = []
+            month_map[month_key].append(date_str)
+        return list(month_map.items())
+
     def _generate_index_html(self, report_dates: List[str]) -> str:
         """
         インデックスページのHTMLを生成
+
+        過去レポートを月別にグループ化して表示することで、
+        日付が増えても一覧が縦に肥大化しないよう改善している。
 
         Args:
             report_dates: レポート日付のリスト（新しい順）
@@ -430,21 +477,63 @@ class ReportGenerator:
             color: #555;
             margin-top: 30px;
         }
+        details {
+            background: white;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        summary {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            user-select: none;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 10px;
+            color: #4CAF50;
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+        details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        summary:hover {
+            background-color: #f9f9f9;
+        }
+        .month-count {
+            color: #888;
+            font-weight: normal;
+            font-size: 14px;
+            margin-left: 8px;
+        }
         ul {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
         li {
-            background: white;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-top: 1px solid #f0f0f0;
+            padding: 12px 20px 12px 44px;
+        }
+        li:last-child {
+            border-bottom: none;
         }
         a {
             color: #4CAF50;
             text-decoration: none;
-            font-size: 18px;
+            font-size: 16px;
         }
         a:hover {
             text-decoration: underline;
@@ -466,22 +555,31 @@ class ReportGenerator:
         if report_dates:
             latest = report_dates[0]
             html += f"""    <div class="latest">
-        <p style="margin-bottom: 10px;">📊 最新レポート</p>
-        <a href="{latest}/index.html">{latest}</a>
+        <p style="margin-bottom: 10px;">最新レポート</p>
+        <a href="{latest}/index.html">{self._format_date_with_weekday(latest)}</a>
     </div>
 
 """
 
-        # 過去のレポート
-        if len(report_dates) > 1:
-            html += """    <h2>過去のレポート</h2>
-    <ul>
-"""
-            for date in report_dates[1:]:
-                html += f'        <li><a href="{date}/index.html">{date}</a></li>\n'
+        # 過去のレポートを月別グループで表示
+        past_dates = report_dates[1:]
+        if past_dates:
+            html += "    <h2>過去のレポート</h2>\n"
 
-            html += """    </ul>
+            month_groups = self._group_dates_by_month(past_dates)
+            for index, (month_label, dates_in_month) in enumerate(month_groups):
+                count = len(dates_in_month)
+                # 最新月（先頭グループ）のみデフォルト展開にする
+                open_attr = " open" if index == 0 else ""
+                html += f"""    <details{open_attr}>
+        <summary>{month_label}<span class="month-count">({count}件)</span></summary>
+        <ul>
 """
+                for date_str in dates_in_month:
+                    label = self._format_date_with_weekday(date_str)
+                    html += f'            <li><a href="{date_str}/index.html">{label}</a></li>\n'
+
+                html += "        </ul>\n    </details>\n"
 
         # フッター
         html += f"""    <div class="footer">

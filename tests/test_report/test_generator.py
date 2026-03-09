@@ -173,3 +173,184 @@ def test_multiple_reports(test_logger, test_output_dir, sample_screened_stocks):
 
     # 最新レポートが正しく表示されているか（降順でソート）
     assert "2025-12-26" in index_content
+
+
+# --- _format_date_with_weekday のテスト ---
+
+
+def test_format_date_with_weekday_月曜日(test_logger, test_output_dir):
+    """_format_date_with_weekday: 月曜日は (月) と表示される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 2026-02-02 は月曜日
+    result = generator._format_date_with_weekday("2026-02-02")
+
+    assert result == "2026-02-02 (月)"
+
+
+def test_format_date_with_weekday_金曜日(test_logger, test_output_dir):
+    """_format_date_with_weekday: 金曜日は (金) と表示される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 2026-02-06 は金曜日
+    result = generator._format_date_with_weekday("2026-02-06")
+
+    assert result == "2026-02-06 (金)"
+
+
+def test_format_date_with_weekday_全曜日(test_logger, test_output_dir):
+    """_format_date_with_weekday: 月〜日の7曜日すべてが正しくマッピングされる"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 2026-02-02(月) から 2026-02-08(日) の1週間で全曜日を確認
+    expected = [
+        ("2026-02-02", "月"),
+        ("2026-02-03", "火"),
+        ("2026-02-04", "水"),
+        ("2026-02-05", "木"),
+        ("2026-02-06", "金"),
+        ("2026-02-07", "土"),
+        ("2026-02-08", "日"),
+    ]
+    for date_str, weekday_ja in expected:
+        result = generator._format_date_with_weekday(date_str)
+        assert result == f"{date_str} ({weekday_ja})", f"{date_str} の曜日が不正"
+
+
+# --- _group_dates_by_month のテスト ---
+
+
+def test_group_dates_by_month_単一月(test_logger, test_output_dir):
+    """_group_dates_by_month: 同一月の日付は1グループにまとまる"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    dates = ["2026-01-05", "2026-01-06", "2026-01-07"]
+    groups = generator._group_dates_by_month(dates)
+
+    assert len(groups) == 1
+    month_label, dates_in_month = groups[0]
+    assert month_label == "2026年01月"
+    assert dates_in_month == ["2026-01-05", "2026-01-06", "2026-01-07"]
+
+
+def test_group_dates_by_month_複数月(test_logger, test_output_dir):
+    """_group_dates_by_month: 複数月にまたがる日付は月ごとにグループ化される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 降順（新しい順）で渡す
+    dates = [
+        "2026-02-27",
+        "2026-02-26",
+        "2026-01-30",
+        "2026-01-29",
+        "2025-12-26",
+    ]
+    groups = generator._group_dates_by_month(dates)
+
+    assert len(groups) == 3
+    assert groups[0][0] == "2026年02月"
+    assert groups[0][1] == ["2026-02-27", "2026-02-26"]
+    assert groups[1][0] == "2026年01月"
+    assert groups[1][1] == ["2026-01-30", "2026-01-29"]
+    assert groups[2][0] == "2025年12月"
+    assert groups[2][1] == ["2025-12-26"]
+
+
+def test_group_dates_by_month_順序保持(test_logger, test_output_dir):
+    """_group_dates_by_month: 降順入力に対して新しい月が先頭になる"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    dates = ["2026-03-01", "2026-02-28", "2026-01-31"]
+    groups = generator._group_dates_by_month(dates)
+
+    month_labels = [label for label, _ in groups]
+    assert month_labels == ["2026年03月", "2026年02月", "2026年01月"]
+
+
+# --- _generate_index_html のテスト ---
+
+
+def test_generate_index_html_空リスト(test_logger, test_output_dir):
+    """_generate_index_html: 日付リストが空でもHTMLが生成される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    html = generator._generate_index_html([])
+
+    assert "<!DOCTYPE html>" in html
+    assert "アーカイブ" in html
+    # 最新レポートセクションは存在しない
+    assert "最新レポート" not in html
+
+
+def test_generate_index_html_最新レポートのみ(test_logger, test_output_dir):
+    """_generate_index_html: 日付が1件のとき最新レポートのみ表示、過去のレポートセクションはない"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    html = generator._generate_index_html(["2026-02-28"])
+
+    assert "最新レポート" in html
+    assert "2026-02-28" in html
+    # 過去のレポートセクションは表示されない
+    assert "過去のレポート" not in html
+    assert "<details" not in html
+
+
+def test_generate_index_html_月別グルーピング(test_logger, test_output_dir):
+    """_generate_index_html: 過去レポートが月別の<details>タグでグループ化される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    dates = [
+        "2026-02-28",  # 最新レポート（カード表示）
+        "2026-02-27",
+        "2026-02-26",
+        "2026-01-30",
+        "2026-01-29",
+    ]
+    html = generator._generate_index_html(dates)
+
+    assert "2026年02月" in html
+    assert "2026年01月" in html
+    # 月ごとの件数表示
+    assert "(2件)" in html  # 2月は27, 26の2件
+    assert "(2件)" in html  # 1月は30, 29の2件
+
+
+def test_generate_index_html_最新月はopen属性あり(test_logger, test_output_dir):
+    """_generate_index_html: 最新月の<details>にはopen属性が付与される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    dates = [
+        "2026-02-28",  # 最新レポート（カード表示）
+        "2026-02-27",
+        "2026-01-30",
+    ]
+    html = generator._generate_index_html(dates)
+
+    # 最新月（2月）はopenあり
+    assert "<details open>" in html
+    # 2番目以降の月はopenなし（<details> のみ）
+    # detailsタグが2つあり、最初の1つだけopen
+    assert html.count("<details open>") == 1
+    assert html.count("<details>") == 1
+
+
+def test_generate_index_html_曜日表示(test_logger, test_output_dir):
+    """_generate_index_html: 各日付に日本語曜日が表示される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 2026-02-02は月曜日、2026-02-06は金曜日
+    dates = ["2026-02-06", "2026-02-02"]
+    html = generator._generate_index_html(dates)
+
+    assert "2026-02-06 (金)" in html
+    assert "2026-02-02 (月)" in html
+
+
+def test_generate_index_html_最新レポートにも曜日表示(test_logger, test_output_dir):
+    """_generate_index_html: 最新レポートのカードにも曜日が表示される"""
+    generator = ReportGenerator(output_dir=str(test_output_dir), logger=test_logger)
+
+    # 2026-02-27は金曜日
+    html = generator._generate_index_html(["2026-02-27"])
+
+    assert "2026-02-27 (金)" in html
