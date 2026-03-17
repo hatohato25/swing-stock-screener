@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI分析レポート - 2026-03-17</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #121824;
+            --bg-card: #1a2332;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ba3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glow-green: rgba(16, 185, 129, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0a0e17 0%, #12182e 100%);
+            background-attachment: fixed;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            position: relative;
+            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '🤖 ';
+            color: var(--accent-purple);
+        }
+
+        .date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .date::before {
+            content: '[ ';
+            color: var(--accent-purple);
+        }
+
+        .date::after {
+            content: ' ]';
+            color: var(--accent-purple);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 24px var(--glow-cyan);
+            transform: translateX(-4px);
+        }
+
+        .back-link::before {
+            content: '← ';
+        }
+
+        .ai-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+        }
+
+        .ai-content h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-subtle);
+            letter-spacing: 0.02em;
+        }
+
+        .ai-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .ai-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .ai-content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .ai-content ul, .ai-content ol {
+            color: var(--text-secondary);
+            margin-left: 24px;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .ai-content ul li, .ai-content ol li {
+            margin-bottom: 8px;
+        }
+
+        .ai-content strong {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .ai-content em {
+            color: var(--accent-amber);
+            font-style: italic;
+        }
+
+        .ai-content code {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .ai-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .ai-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .ai-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .ai-content table th,
+        .ai-content table td {
+            border: 1px solid var(--border-subtle);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .ai-content table th {
+            background: var(--bg-secondary);
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .ai-content table td {
+            color: var(--text-secondary);
+        }
+
+        .disclaimer {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .disclaimer::before {
+            content: '⚠';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+            color: var(--accent-red);
+            opacity: 0.1;
+        }
+
+        .disclaimer h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .disclaimer p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+        }
+
+        footer::before {
+            content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+            display: block;
+            color: var(--border-subtle);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .ai-content {
+                padding: 24px;
+            }
+
+            .ai-content h2 {
+                font-size: 20px;
+            }
+
+            .ai-content h3 {
+                font-size: 18px;
+            }
+
+            .disclaimer {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI分析レポート</h1>
+            <p class="date">2026-03-17</p>
+        </header>
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px;">
+            <a href="index.html" class="back-link">📊 日次レポートに戻る</a>
+            <a href="../index.html" class="back-link">📂 レポート一覧に戻る</a>
+        </div>
+
+        <div class="ai-content">
+            <p>ご提示いただいたスクリーニングレポートを詳細に分析いたしました。スウィングトレーダーの視点から、市場の勢い（モメンタム）と逆張り（リバーサル）の機会を組み合わせた戦略を提案します。</p>
+<hr />
+<h3>1. 注目銘柄の選定（5銘柄）</h3>
+<p>今回は、複数のカテゴリで重複して検出された「トレンドの勢い」と「ファンダメンタルズの裏付け」がある銘柄を中心に選定しました。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">銘柄名 (コード)</th>
+<th style="text-align: left;">注目カテゴリ</th>
+<th style="text-align: left;">選定理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>ブレインズテクノロジー (4075)</strong></td>
+<td style="text-align: left;">出来高急増 / ブレイクアウト</td>
+<td style="text-align: left;">両カテゴリで高スコア。AI関連の強いモメンタムと出来高急増が継続的な上昇を予感させる。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ｆ Ｄ Ｋ (6955)</strong></td>
+<td style="text-align: left;">出来高急増 / ブレイクアウト</td>
+<td style="text-align: left;">出来高比率が突出しており、機関投資家の強い関与を示唆。トレンドフォローの王道。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>はてな (3930)</strong></td>
+<td style="text-align: left;">出来高急増 / ブレイクアウト</td>
+<td style="text-align: left;">スクリーニングの重複が確認でき、短期的な需給の改善が非常に良好。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>アルバック (6728)</strong></td>
+<td style="text-align: left;">BB下限反転</td>
+<td style="text-align: left;">逆張り候補筆頭。大型株であり、売られ過ぎ後のリバウンド余地が大きく、ボラティリティが狙い目。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>日本電子 (6951)</strong></td>
+<td style="text-align: left;">BB下限反転</td>
+<td style="text-align: left;">テクニカルな乖離が大きく、短期的な自律反発を狙う「押し目買い」戦略として優秀。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>2. リスク評価</h3>
+<h4>逆張り戦略（BB下限反転）の留意点</h4>
+<ul>
+<li><strong>リスクとリターン</strong>: 逆張りは「落ちてくるナイフ」を掴むリスクを伴います。特に下落トレンドが強力な場合、バンドが拡大（エクスパンション）し、さらなる下落を招く可能性があります。</li>
+<li><strong>ストップロス設定</strong>: BB下限からさらに-2%〜-3%下に設定するか、直近の安値割れを損切りラインとしてください。</li>
+<li><strong>流動性チェック</strong>: 選定銘柄の「平均出来高」が10万株以上であることを確認済みですが、地合いが悪い時は板が薄くなる可能性があるため、<strong>成行注文ではなく指値注文での慎重なエントリー</strong>を推奨します。</li>
+</ul>
+<hr />
+<h3>3. 投資戦略提案</h3>
+<p>時間軸に応じて、ポートフォリオを以下のように配分することをお勧めします。</p>
+<h4>【短期（1-5日）】トレンドフォロー型</h4>
+<ul>
+<li><strong>対象</strong>: 出来高急増 / ブレイクアウトの銘柄</li>
+<li><strong>戦略</strong>: 寄り付き後のトレンドを確認し、前日の高値を更新するタイミングで順張り。</li>
+<li><strong>エグジット</strong>: RSIが80を超えたタイミングでの一部利益確定、または5日移動平均線を下回った時点で機械的に撤退。</li>
+</ul>
+<h4>【中期（1-2週間）】押し目・バリュー回収型</h4>
+<ul>
+<li><strong>対象</strong>: BB下限反転 / インフレ対応バリュー株</li>
+<li><strong>戦略</strong>: 下限反転銘柄については、MACDのゴールデンクロスを確認してからエントリー。バリュー株は、現在の株価位置が25日移動平均線に対して乖離しすぎていないかを確認（乖離率5%以内が理想）。</li>
+<li><strong>エグジット</strong>: 10%程度の利益を目安にするか、ボリンジャーバンド中心線（25日線）への回帰で売却。</li>
+</ul>
+<h4>【長期（2週間以上）】収益性担保型</h4>
+<ul>
+<li><strong>対象</strong>: インフレ対応バリュー株</li>
+<li><strong>戦略</strong>: ROEが高くファンダメンタルズが安定しているため、調整局面での「買い下がり」を検討。</li>
+<li><strong>エグジット</strong>: 四半期決算や材料開示、または25日移動平均線が下向きに転じた場合にポジションを解消。</li>
+</ul>
+<hr />
+<h3>💡 プロからのアドバイス</h3>
+<p>現在の市場環境において、<strong>「出来高を伴った上昇」</strong>は非常に信頼性が高いです。特に<strong>ブレインズテクノロジー(4075)</strong>のような出来高急増かつトレンド発生中の銘柄は、短期的に大きな利益を狙えるチャンスがあります。逆に、逆張り銘柄については欲張らず、リバウンドの初動を拾う「数%の抜き」に徹するのが、大怪我を避けるコツです。</p>
+<h2>※投資判断はご自身の資金管理に基づき、必ず損切りラインを明確にした上で実行してください。</h2>
+<h2>免責事項</h2>
+<ul>
+<li>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</li>
+<li>専門的な投資助言に代わるものではありません。</li>
+<li>投資判断は必ず自己責任で行ってください。</li>
+<li>AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</li>
+<li>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</li>
+</ul>
+        </div>
+
+        <div class="disclaimer">
+            <h3>免責事項</h3>
+            <p>この分析はAIによって生成されたものであり、情報提供のみを目的としています。</p>
+            <p>専門的な投資助言に代わるものではありません。</p>
+            <p>投資判断は必ず自己責任で行ってください。AI分析の精度は保証されません。銘柄の詳細なファンダメンタルズ分析、企業の業績、市場環境等を総合的に考慮することをお勧めします。</p>
+            <p>本分析の利用によって生じたいかなる損害についても、当方は一切の責任を負いません。</p>
+        </div>
+
+        <footer>
+            <p>Powered by Google Gemini 2.5 Flash Preview</p>
+        </footer>
+    </div>
+</body>
+</html>
